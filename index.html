@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>第61期初級禪修班｜三晚初發DM回報系統</title>
+  <style>
+    /* ============================================
+       CSS Variables & Reset
+    ============================================ */
+    :root {
+      --primary: #1a3a5c;      /* 深藍 */
+      --secondary: #8b7355;   /* 褐色 */
+      --accent: #c9a96e;      /* 金色 */
+      --bg: #faf6f0;          /* 米色背景 */
+      --card: #ffffff;
+      --text: #2c2c2c;
+      --text-light: #666;
+      --border: #e0d5c5;
+      --success: #4a7c59;
+      --danger: #a04040;
+      --warning: #b8860b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    /* ============================================
+       Header
+    ============================================ */
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, #2d5a87 100%);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .header p {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    /* ============================================
+       Tab Navigation
+    ============================================ */
+    .tabs {
+      display: flex;
+      background: var(--card);
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab {
+      flex: 1;
+      min-width: 90px;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .tab:hover { color: var(--primary); }
+
+    /* ============================================
+       Page Sections
+    ============================================ */
+    .page { display: none; padding: 16px; max-width: 680px; margin: 0 auto; }
+    .page.active { display: block; }
+
+    /* ============================================
+       Cards
+    ============================================ */
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ============================================
+       Form Elements
+    ============================================ */
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .required::after { content: ' *'; color: var(--danger); }
+
+    input[type="text"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .radio-group, .checkbox-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .radio-item, .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .radio-item input, .checkbox-item input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+    }
+
+    /* Participant list */
+    .participant-list {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      background: #fff;
+    }
+    .participant-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .participant-item:last-child { border-bottom: none; }
+    .participant-item span {
+      flex: 1;
+      font-size: 0.95rem;
+    }
+    .participant-item button {
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .add-participant {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .add-participant input { flex: 1; }
+
+    /* ============================================
+       Buttons
+    ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover { background: #2d5a87; }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 0.9rem;
+    }
+    .btn-block { width: 100%; }
+
+    .btn-add {
+      background: var(--success);
+      color: white;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+    }
+
+    /* ============================================
+       Notice Box
+    ============================================ */
+    .notice-box {
+      background: #fff9e6;
+      border: 1px solid #e6d5a8;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+    }
+    .notice-box h3 {
+      color: var(--warning);
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+    .notice-box ul {
+      margin-left: 18px;
+      color: #5a4a2a;
+    }
+    .notice-box li { margin-bottom: 4px; }
+
+    /* ============================================
+       Announcement (複製用)
+    ============================================ */
+    .announcement-text {
+      background: #f5f0e8;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+
+    /* ============================================
+       Stats Cards
+    ============================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .stat-card .num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .stat-card.highlight {
+      background: linear-gradient(135deg, var(--primary), #2d5a87);
+      color: white;
+    }
+    .stat-card.highlight .num { color: white; }
+    .stat-card.highlight .label { color: rgba(255,255,255,0.8); }
+
+    /* ============================================
+       Group Table (統計總表)
+    ============================================ */
+    .group-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      display: block;
+    }
+    .group-table th {
+      background: var(--primary);
+      color: white;
+      padding: 8px 6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .group-table td {
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .group-table tr:nth-child(even) td { background: #f9f5ef; }
+    .group-table { background: var(--card); border-radius: 10px; overflow: hidden; }
+
+    /* Location stats */
+    .location-group {
+      background: var(--card);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    .location-group h4 {
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .location-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 0.9rem;
+    }
+    .location-row:last-child { border-bottom: none; }
+    .location-name { font-weight: 600; min-width: 50px; }
+    .location-info { color: var(--text-light); font-size: 0.85rem; }
+
+    /* ============================================
+       Settings Page
+    ============================================ */
+    .location-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .location-card-header {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    /* ============================================
+       Alert / Toast
+    ============================================ */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+    }
+    .alert-success {
+      background: #e8f5e9;
+      color: var(--success);
+      border: 1px solid #a5d6a7;
+    }
+    .alert-error {
+      background: #ffebee;
+      color: var(--danger);
+      border: 1px solid #ef9a9a;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ============================================
+       Export buttons
+    ============================================ */
+    .export-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    /* ============================================
+       Pending groups
+    ============================================ */
+    .pending-groups {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pending-tag {
+      background: #ffebee;
+      color: var(--danger);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .all-done {
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    /* ============================================
+       Section dividers in form
+    ============================================ */
+    .section-divider {
+      background: linear-gradient(90deg, var(--primary) 0%, #4a7cb5 100%);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin: 20px 0 14px;
+    }
+    .section-divider.second { background: linear-gradient(90deg, var(--secondary) 0%, #a08060 100%); }
+
+    /* ============================================
+       Modal (confirm dialog)
+    ============================================ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal h3 { margin-bottom: 12px; color: var(--primary); }
+    .modal-content { font-size: 0.9rem; line-height: 1.7; margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* ============================================
+       Responsive
+    ============================================ */
+    @media (max-width: 480px) {
+      .header h1 { font-size: 1.1rem; }
+      .tab { min-width: 75px; font-size: 0.8rem; padding: 10px 6px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .group-table { font-size: 0.75rem; }
+      .group-table th, .group-table td { padding: 6px 4px; }
+    }
+    @media (min-width: 640px) {
+      .page { padding: 24px; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================
+     Header
+============================================ -->
+<div class="header">
+  <h1>🪷 第61期初級禪修班｜三晚初發DM回報系統</h1>
+  <p>總學員長：蔡耀文</p>
+</div>
+
+<!-- ============================================
+     Tabs
+============================================ -->
+<nav class="tabs">
+  <button class="tab active" data-tab="announce">📋 公告說明</button>
+  <button class="tab" data-tab="form">📝 學員長回報</button>
+  <button class="tab" data-tab="stats">📊 統計總表</button>
+  <button class="tab" data-tab="settings">⚙️ 地點設定</button>
+</nav>
+
+<!-- ============================================
+     Page 1: 公告說明
+============================================ -->
+<div id="page-announce" class="page active">
+  <div class="card">
+    <div class="card-title">📌 活動目的</div>
+    <p>為 <strong>第61期初級禪修班招生</strong>，我們將在兩個週次發放 DM 與面紙包，將禪修班資訊分享給更多有緣人。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 發放時間與地點</div>
+    <div style="margin-bottom:12px;">
+      <strong>第一梯次｜6/3（三）晚上 8:00～9:00</strong>
+      <div style="color:var(--text-light);font-size:0.85rem;margin-top:4px;" id="locations-63"></div>
+    </div>
+    <div>
+      <strong>第二梯次｜6/10（三）晚上 8:00～9:00</strong>
+      <div style="color:var(--text-light);font-size:0.85rem;margin-top:4px;" id="locations-610"></div>
+    </div>
+  </div>
+
+  <div class="notice-box">
+    <h3>⚠️ 注意事項</h3>
+    <ul>
+      <li>每次選<strong>3個不同地點</strong>讓學員登記</li>
+      <li>精舍集合，或自行前往指定地點集合，圓滿後原地解散</li>
+      <li>帶隊學長請於前一日備妥所有物料，結束後請帶回原位</li>
+      <li>物料包含：背心紅色與藍色、面紙包、DM、基本資料表、筆、海報、看板等</li>
+      <li>背心需清洗後才歸還</li>
+      <li>到定點後，請拍團體照留念</li>
+      <li>發放時請保持親切、自然、莊嚴，重點是結善緣，不勉強、不推銷</li>
+      <li><strong>鼓勵同一組盡量選擇同一地點</strong>，方便集合、帶隊、領物資與彼此照應</li>
+    </ul>
+  </div>
+
+  <div class="notice-box" style="background:#e8f0ff;border-color:#a0b8e8;">
+    <h3>💡 填寫提醒</h3>
+    <ul>
+      <li>請各組學員長協助統計自己組內師兄，<strong>再統一送出回報</strong></li>
+      <li>同一組可重複填寫（系統會自動更新為最新資料）</li>
+      <li>資料會同步到 <strong>Lark Base</strong>，總學員長可即時查看</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 LINE 群組公告文字</div>
+    <div class="announcement-text" id="announcement-text">各位初級班師兄大家好，阿彌陀佛。
+
+我是初級班總學員長蔡耀文。
+
+為了協助第61期初級禪修班招生，我們三晚初班在6/3（三）及6/10（三）晚上原上課時間，有兩次發心機會，一起發放DM與面紙包，將禪修班資訊分享給更多有緣人。
+
+請各組學員長協助統計自己組內師兄的發心意願，並透過本回報系統填寫：
+1. 6/3（三）是否可發心、選擇哪一個地點
+2. 6/10（三）是否可發心、選擇哪一個地點
+3. 各週參與人員名單
+4. 集合地點與備註
+
+每週有三個建議地點可選，鼓勵同一組師兄盡量選擇同一地點，方便集合、帶隊、領物資與彼此照應。
+
+感恩各位師兄一起發心，讓更多有緣人有機會接觸禪修、認識佛法，也成就我們自己一份護持招生的功德。
+
+阿彌陀佛。</div>
+    <button class="btn btn-primary btn-sm btn-block" onclick="copyAnnouncement()">📋 複製公告文字</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔗 快速連結</div>
+    <a href="https://psgi7t86exuf.sg.larksuite.com/base/LiRqbp72naWKRRsMNYTl5cjTgof" target="_blank" class="btn btn-outline btn-sm btn-block" style="margin-bottom:8px;">
+      📊 開啟 Lark Base 統計表
+    </a>
+    <button class="btn btn-secondary btn-sm btn-block" onclick="switchTab('form')">📝 我要填寫回報</button>
+  </div>
+</div>
+
+<!-- ============================================
+     Page 2: 學員長回報表單
+============================================ -->
+<div id="page-form" class="page">
+  <div id="form-alert"></div>
+
+  <form id="report-form" onsubmit="return handleSubmit(event)">
+    <!-- 基本資料 -->
+    <div class="card">
+      <div class="card-title">👤 基本資料</div>
+
+      <div class="form-group">
+        <label class="required">組別</label>
+        <select id="group" required onchange="loadGroupData()">
+          <option value="">請選擇組別</option>
+          <option value="1">第1組</option>
+          <option value="2">第2組</option>
+          <option value="3">第3組</option>
+          <option value="4">第4組</option>
+          <option value="5">第5組</option>
+          <option value="6">第6組</option>
+          <option value="7">第7組</option>
+          <option value="8">第8組</option>
+          <option value="9">第9組</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="required">組學員長姓名</label>
+        <input type="text" id="leader-name" placeholder="請輸入姓名" required>
+      </div>
+
+      <div class="form-group">
+        <label>聯絡方式</label>
+        <input type="text" id="contact" placeholder="LINE 名稱或電話（非必填）">
+      </div>
+    </div>
+
+    <!-- 6/3 填報區 -->
+    <div class="section-divider">第一梯次｜6/3（三）晚上 8:00～9:00</div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="required">是否參與</label>
+        <div class="radio-group">
+          <label class="radio-item">
+            <input type="radio" name="j63" value="是" required onchange="toggle63()"> 是
+          </label>
+          <label class="radio-item">
+            <input type="radio" name="j63" value="否" onchange="toggle63()"> 否
+          </label>
+        </div>
+      </div>
+
+      <div id="form-63-details">
+        <div class="form-group">
+          <label class="required">選擇地點</label>
+          <select id="loc63">
+            <option value="">請選擇地點</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>集合地點說明</label>
+          <input type="text" id="meet63" placeholder="請填寫實際集合地點">
+        </div>
+
+        <div class="form-group">
+          <label class="required">參與人員名單</label>
+          <div class="participant-list" id="participants-63"></div>
+          <div class="add-participant">
+            <input type="text" id="input-63" placeholder="輸入姓名後按新增">
+            <button type="button" class="btn btn-add" onclick="addParticipant('63')">+ 新增</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>備註</label>
+          <textarea id="note63" placeholder="任何補充說明"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6/10 填報區 -->
+    <div class="section-divider second">第二梯次｜6/10（三）晚上 8:00～9:00</div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="required">是否參與</label>
+        <div class="radio-group">
+          <label class="radio-item">
+            <input type="radio" name="j610" value="是" required onchange="toggle610()"> 是
+          </label>
+          <label class="radio-item">
+            <input type="radio" name="j610" value="否" onchange="toggle610()"> 否
+          </label>
+        </div>
+      </div>
+
+      <div id="form-610-details">
+        <div class="form-group">
+          <label class="required">選擇地點</label>
+          <select id="loc610">
+            <option value="">請選擇地點</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>集合地點說明</label>
+          <input type="text" id="meet610" placeholder="請填寫實際集合地點">
+        </div>
+
+        <div class="form-group">
+          <label class="required">參與人員名單</label>
+          <div class="participant-list" id="participants-610"></div>
+          <div class="add-participant">
+            <input type="text" id="input-610" placeholder="輸入姓名後按新增">
+            <button type="button" class="btn btn-add" onclick="addParticipant('610')">+ 新增</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>備註</label>
+          <textarea id="note610" placeholder="任何補充說明"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 總備註 -->
+    <div class="card">
+      <div class="form-group">
+        <label>其他備註</label>
+        <textarea id="note-general" placeholder="針對兩週次或其他事項的補充"></textarea>
+      </div>
+    </div>
+
+    <!-- 送出按鈕 -->
+    <button type="submit" class="btn btn-primary btn-block" style="margin-bottom:20px;">
+      ✅ 送出回報
+    </button>
+  </form>
+</div>
+
+<!-- ============================================
+     Page 3: 統計總表
+============================================ -->
+<div id="page-stats" class="page">
+  <div id="stats-alert"></div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="num" id="stat-reported">0</div>
+      <div class="label">已回報組數</div>
+    </div>
+    <div class="stat-card highlight">
+      <div class="num">/9</div>
+      <div class="label">總組數</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-63">0</div>
+      <div class="label">6/3 參與人數</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="stat-610">0</div>
+      <div class="label">6/10 參與人數</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚠️ 尚未回報組別</div>
+    <div id="pending-groups" class="pending-groups"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📍 6/3 各地點統計</div>
+    <div id="stats-63-locations"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📍 6/10 各地點統計</div>
+    <div id="stats-610-locations"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 各組回報明細</div>
+    <div style="overflow-x:auto;">
+      <table class="group-table" id="group-table">
+        <thead>
+          <tr>
+            <th>組</th>
+            <th>學員長</th>
+            <th>6/3地</th>
+            <th>6/3集合</th>
+            <th>6/3人</th>
+            <th>6/10地</th>
+            <th>6/10集合</th>
+            <th>6/10人</th>
+            <th>備註</th>
+          </tr>
+        </thead>
+        <tbody id="group-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📤 匯出資料</div>
+    <div class="export-btns">
+      <button class="btn btn-primary btn-sm" onclick="exportCSV()">📥 CSV</button>
+      <button class="btn btn-primary btn-sm" onclick="exportJSON()">📥 JSON</button>
+      <button class="btn btn-secondary btn-sm" onclick="copyLineText()">📋 複製 LINE 文字</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:16px;">
+    <button class="btn btn-outline btn-sm" onclick="refreshStats()">🔄 重新整理</button>
+  </div>
+</div>
+
+<!-- ============================================
+     Page 4: 地點設定
+============================================ -->
+<div id="page-settings" class="page">
+  <div id="settings-alert"></div>
+
+  <div class="card">
+    <div class="card-title">📍 6/3 地點設定</div>
+    <div id="settings-63"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📍 6/10 地點設定</div>
+    <div id="settings-610"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔧 Lark API 設定</div>
+    <div class="form-group">
+      <label>Cloudflare Worker URL（用於同步到 Lark Base）</label>
+      <input type="text" id="cf-worker-url" placeholder="https://your-worker.workers.dev" onchange="saveSettings()">
+      <small style="color:var(--text-light);font-size:0.8rem;">留空則只使用本機 localStorage</small>
+    </div>
+    <div class="form-group">
+      <label>Lark App Token（Base ID）</label>
+      <input type="text" id="lark-app-token" placeholder="LiRqbp72naWKRRsMNYTl5cjTgof" value="LiRqbp72naWKRRsMNYTl5cjTgof" onchange="saveSettings()">
+    </div>
+    <div class="form-group">
+      <label>Lark Table ID</label>
+      <input type="text" id="lark-table-id" placeholder="tblsnPYcOvzeoHMW" value="tblsnPYcOvzeoHMW" onchange="saveSettings()">
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-block" onclick="saveLocationSettings()">💾 儲存設定</button>
+  <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="resetToDefaults()">🔄 恢復預設地點</button>
+</div>
+
+<!-- ============================================
+     Confirm Modal
+============================================ -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <h3>✅ 確認回報內容</h3>
+    <div class="modal-content" id="confirm-content"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmSubmit()">確認送出</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================
+   Constants & Config
+============================================ */
+const STORAGE_KEY = 'dm_report_data';
+const SETTINGS_KEY = 'dm_report_settings';
+
+const DEFAULT_LOCATIONS = {
+  '63': [
+    { code: '園1', name: '（待設定）', meet: '（待設定）', note: '' },
+    { code: '賣2', name: '（待設定）', meet: '（待設定）', note: '' },
+    { code: '聯1', name: '（待設定）', meet: '（待設定）', note: '' },
+  ],
+  '610': [
+    { code: '掃1', name: '（待設定）', meet: '（待設定）', note: '' },
+    { code: '精2', name: '（待設定）', meet: '（待設定）', note: '' },
+    { code: '園2', name: '（待設定）', meet: '（待設定）', note: '' },
+  ]
+};
+
+/* ============================================
+   State
+============================================ */
+let reportData = {};        // { groupId: { ... } }
+let locationSettings = {};
+let participants63 = [];
+let participants610 = [];
+let settings = {};
+
+/* ============================================
+   Init
+============================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Load data
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) reportData = JSON.parse(saved);
+
+  const savedSettings = localStorage.getItem(SETTINGS_KEY);
+  if (savedSettings) {
+    settings = JSON.parse(savedSettings);
+  } else {
+    settings = {
+      locations: JSON.parse(JSON.stringify(DEFAULT_LOCATIONS)),
+      cfWorkerUrl: '',
+      larkAppToken: 'LiRqbp72naWKRRsMNYTl5cjTgof',
+      larkTableId: 'tblsnPYcOvzeoHMW'
+    };
+  }
+  locationSettings = settings.locations;
+
+  // Tab click
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+
+  // Init location selects
+  renderLocationSelects();
+  renderLocationSettings();
+  renderAnnounceLocations();
+
+  // Toggle visibility
+  toggle63();
+  toggle610();
+
+  // Stats
+  refreshStats();
+});
+
+/* ============================================
+   Tab Navigation
+============================================ */
+function switchTab(tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  document.getElementById(`page-${tabId}`).classList.add('active');
+
+  if (tabId === 'stats') refreshStats();
+}
+
+/* ============================================
+   Location helpers
+============================================ */
+function renderLocationSelects() {
+  ['63', '610'].forEach(key => {
+    const sel = document.getElementById(`loc${key}`);
+    sel.innerHTML = '<option value="">請選擇地點</option>';
+    locationSettings[key].forEach(loc => {
+      const label = loc.name && loc.name !== '（待設定）'
+        ? `${loc.code}｜${loc.name}`
+        : loc.code;
+      sel.innerHTML += `<option value="${loc.code}">${label}</option>`;
+    });
+  });
+}
+
+function renderAnnounceLocations() {
+  const l63 = locationSettings['63'].map(l => `${l.code}（${l.name}）`).join('、');
+  const l610 = locationSettings['610'].map(l => `${l.code}（${l.name}）`).join('、');
+  document.getElementById('locations-63').textContent = l63;
+  document.getElementById('locations-610').textContent = l610;
+}
+
+function renderLocationSettings() {
+  ['63', '610'].forEach(key => {
+    const container = document.getElementById(`settings-${key}`);
+    container.innerHTML = '';
+    locationSettings[key].forEach((loc, i) => {
+      container.innerHTML += `
+        <div class="location-card">
+          <div class="location-card-header">${loc.code}</div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label>發放地點名稱</label>
+            <input type="text" id="loc-${key}-${i}-name" value="${loc.name}" placeholder="例：台北車站">
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label>集合地點</label>
+            <input type="text" id="loc-${key}-${i}-meet" value="${loc.meet}" placeholder="例：西門捷運站1號出口">
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>備註</label>
+            <input type="text" id="loc-${key}-${i}-note" value="${loc.note}" placeholder="其他補充">
+          </div>
+        </div>
+      `;
+    });
+  });
+
+  // Fill API settings
+  document.getElementById('cf-worker-url').value = settings.cfWorkerUrl || '';
+  document.getElementById('lark-app-token').value = settings.larkAppToken || '';
+  document.getElementById('lark-table-id').value = settings.larkTableId || '';
+}
+
+function saveLocationSettings() {
+  ['63', '610'].forEach(key => {
+    locationSettings[key].forEach((loc, i) => {
+      loc.name = document.getElementById(`loc-${key}-${i}-name`).value;
+      loc.meet = document.getElementById(`loc-${key}-${i}-meet`).value;
+      loc.note = document.getElementById(`loc-${key}-${i}-note`).value;
+    });
+  });
+
+  settings.locations = locationSettings;
+  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value;
+  settings.larkAppToken = document.getElementById('lark-app-token').value;
+  settings.larkTableId = document.getElementById('lark-table-id').value;
+
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  showToast('✅ 設定已儲存');
+  renderLocationSelects();
+  renderAnnounceLocations();
+}
+
+function resetToDefaults() {
+  if (!confirm('確定恢復預設地點？自訂的設定會被覆蓋。')) return;
+  settings.locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+  locationSettings = settings.locations;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  renderLocationSettings();
+  renderLocationSelects();
+  renderAnnounceLocations();
+  showToast('✅ 已恢復預設');
+}
+
+function saveSettings() {
+  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value;
+  settings.larkAppToken = document.getElementById('lark-app-token').value;
+  settings.larkTableId = document.getElementById('lark-table-id').value;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+/* ============================================
+   Form: toggle sections
+============================================ */
+function toggle63() {
+  const val = document.querySelector('input[name="j63"]:checked')?.value;
+  document.getElementById('form-63-details').style.display = val === '是' ? 'block' : 'none';
+  if (val === '否') {
+    document.getElementById('loc63').removeAttribute('required');
+  } else {
+    document.getElementById('loc63').setAttribute('required', '');
+  }
+}
+
+function toggle610() {
+  const val = document.querySelector('input[name="j610"]:checked')?.value;
+  document.getElementById('form-610-details').style.display = val === '是' ? 'block' : 'none';
+  if (val === '否') {
+    document.getElementById('loc610').removeAttribute('required');
+  } else {
+    document.getElementById('loc610').setAttribute('required', '');
+  }
+}
+
+/* ============================================
+   Participants
+============================================ */
+function addParticipant(key) {
+  const input = document.getElementById(`input-${key}`);
+  const name = input.value.trim();
+  if (!name) return;
+
+  if (key === '63') {
+    if (!participants63.includes(name)) participants63.push(name);
+    renderParticipants('63', participants63);
+    input.value = '';
+  } else {
+    if (!participants610.includes(name)) participants610.push(name);
+    renderParticipants('610', participants610);
+    input.value = '';
+  }
+}
+
+function removeParticipant(key, name) {
+  if (key === '63') {
+    participants63 = participants63.filter(n => n !== name);
+    renderParticipants('63', participants63);
+  } else {
+    participants610 = participants610.filter(n => n !== name);
+    renderParticipants('610', participants610);
+  }
+}
+
+function renderParticipants(key, list) {
+  const container = document.getElementById(`participants-${key}`);
+  if (list.length === 0) {
+    container.innerHTML = '<div style="color:var(--text-light);font-size:0.85rem;padding:4px 0;">尚無參與人員，請新增</div>';
+    return;
+  }
+  container.innerHTML = list.map(name => `
+    <div class="participant-item">
+      <span>${name}</span>
+      <button type="button" onclick="removeParticipant('${key}','${name}')">×</button>
+    </div>
+  `).join('');
+}
+
+/* ============================================
+   Load existing group data
+============================================ */
+function loadGroupData() {
+  const group = document.getElementById('group').value;
+  if (!group || !reportData[group]) {
+    // Reset form
+    document.getElementById('leader-name').value = '';
+    document.getElementById('contact').value = '';
+    document.querySelector('input[name="j63"][value=""]').checked = true;
+    toggle63();
+    document.querySelector('input[name="j610"][value=""]').checked = true;
+    toggle610();
+    participants63 = [];
+    participants610 = [];
+    renderParticipants('63', []);
+    renderParticipants('610', []);
+    return;
+  }
+
+  const d = reportData[group];
+  document.getElementById('leader-name').value = d.leaderName || '';
+  document.getElementById('contact').value = d.contact || '';
+
+  // 6/3
+  const r63 = d.j63 || {};
+  document.querySelector(`input[name="j63"][value="${r63.participate || ''}"]`).checked = true;
+  toggle63();
+  document.getElementById('loc63').value = r63.location || '';
+  document.getElementById('meet63').value = r63.meetPoint || '';
+  participants63 = r63.participants || [];
+  renderParticipants('63', participants63);
+  document.getElementById('note63').value = r63.note || '';
+
+  // 6/10
+  const r610 = d.j610 || {};
+  document.querySelector(`input[name="j610"][value="${r610.participate || ''}"]`).checked = true;
+  toggle610();
+  document.getElementById('loc610').value = r610.location || '';
+  document.getElementById('meet610').value = r610.meetPoint || '';
+  participants610 = r610.participants || [];
+  renderParticipants('610', participants610);
+  document.getElementById('note610').value = r610.note || '';
+
+  document.getElementById('note-general').value = d.noteGeneral || '';
+}
+
+/* ============================================
+   Submit
+============================================ */
+function handleSubmit(e) {
+  e.preventDefault();
+
+  const group = document.getElementById('group').value;
+  const leaderName = document.getElementById('leader-name').value.trim();
+
+  if (!group) { showAlert('form-alert', '❌ 請選擇組別', 'error'); return false; }
+  if (!leaderName) { showAlert('form-alert', '❌ 請填寫組學員長姓名', 'error'); return false; }
+
+  const j63Val = document.querySelector('input[name="j63"]:checked')?.value;
+  const j610Val = document.querySelector('input[name="j610"]:checked')?.value;
+
+  if (!j63Val) { showAlert('form-alert', '❌ 請選擇 6/3 是否參與', 'error'); return false; }
+  if (!j610Val) { showAlert('form-alert', '❌ 請選擇 6/10 是否參與', 'error'); return false; }
+
+  if (j63Val === '是') {
+    const loc63 = document.getElementById('loc63').value;
+    if (!loc63) { showAlert('form-alert', '❌ 6/3 請選擇地點', 'error'); return false; }
+    if (participants63.length === 0) { showAlert('form-alert', '❌ 6/3 請至少新增一位參與人員', 'error'); return false; }
+  }
+  if (j610Val === '是') {
+    const loc610 = document.getElementById('loc610').value;
+    if (!loc610) { showAlert('form-alert', '❌ 6/10 請選擇地點', 'error'); return false; }
+    if (participants610.length === 0) { showAlert('form-alert', '❌ 6/10 請至少新增一位參與人員', 'error'); return false; }
+  }
+
+  // Build confirm content
+  const locName63 = locationSettings['63'].find(l => l.code === document.getElementById('loc63').value);
+  const locName610 = locationSettings['610'].find(l => l.code === document.getElementById('loc610').value);
+
+  let html = `<strong>第${group}組｜${leaderName}</strong><br><br>`;
+  html += `<strong>6/3（${j63Val}）</strong><br>`;
+  if (j63Val === '是') {
+    html += `地點：${locName63 ? locName63.code + '｜' + locName63.name : document.getElementById('loc63').value}<br>`;
+    html += `集合：${document.getElementById('meet63').value || '（未填）'}<br>`;
+    html += `人員：${participants63.join('、')}<br>`;
+  }
+  html += `<br><strong>6/10（${j610Val}）</strong><br>`;
+  if (j610Val === '是') {
+    html += `地點：${locName610 ? locName610.code + '｜' + locName610.name : document.getElementById('loc610').value}<br>`;
+    html += `集合：${document.getElementById('meet610').value || '（未填）'}<br>`;
+    html += `人員：${participants610.join('、')}<br>`;
+  }
+
+  document.getElementById('confirm-content').innerHTML = html;
+  document.getElementById('confirm-modal').classList.add('show');
+  return false;
+}
+
+async function confirmSubmit() {
+  closeModal();
+
+  const group = document.getElementById('group').value;
+  const leaderName = document.getElementById('leader-name').value.trim();
+  const contact = document.getElementById('contact').value.trim();
+
+  const j63Val = document.querySelector('input[name="j63"]:checked')?.value;
+  const j610Val = document.querySelector('input[name="j610"]:checked')?.value;
+
+  const record = {
+    group,
+    leaderName,
+    contact,
+    j63: {
+      participate: j63Val,
+      location: j63Val === '是' ? document.getElementById('loc63').value : '',
+      meetPoint: j63Val === '是' ? document.getElementById('meet63').value : '',
+      participants: j63Val === '是' ? [...participants63] : [],
+      note: j63Val === '是' ? document.getElementById('note63').value : '',
+    },
+    j610: {
+      participate: j610Val,
+      location: j610Val === '是' ? document.getElementById('loc610').value : '',
+      meetPoint: j610Val === '是' ? document.getElementById('meet610').value : '',
+      participants: j610Val === '是' ? [...participants610] : [],
+      note: j610Val === '是' ? document.getElementById('note610').value : '',
+    },
+    noteGeneral: document.getElementById('note-general').value,
+    updatedAt: new Date().toISOString(),
+  };
+
+  // Save to localStorage (overwrite same group)
+  reportData[group] = record;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(reportData));
+
+  // Try Lark sync
+  let larkOk = false;
+  if (settings.cfWorkerUrl) {
+    larkOk = await syncToLark(record);
+  }
+
+  showAlert('form-alert',
+    larkOk ? '✅ 已回報，資料同步到 Lark Base' : '✅ 已回報（已存本機，Lark 同步可稍後設定）',
+    'success');
+
+  // Reset
+  document.getElementById('report-form').reset();
+  participants63 = [];
+  participants610 = [];
+  renderParticipants('63', []);
+  renderParticipants('610', []);
+  toggle63();
+  toggle610();
+}
+
+/* ============================================
+   Lark Sync via Cloudflare Worker
+============================================ */
+async function syncToLark(record) {
+  try {
+    const response = await fetch(settings.cfWorkerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        appToken: settings.larkAppToken,
+        tableId: settings.larkTableId,
+        record: {
+          '組別': record.group,
+          '組學員長': record.leaderName,
+          '聯絡方式': record.contact,
+          '6/3參與': record.j63.participate,
+          '6/3地點': record.j63.location,
+          '6/3集合地點': record.j63.meetPoint,
+          '6/3參與人員': record.j63.participants.join('\n'),
+          '6/10參與': record.j610.participate,
+          '6/10地點': record.j610.location,
+          '6/10集合地點': record.j610.meetPoint,
+          '6/10參與人員': record.j610.participants.join('\n'),
+          '備註': record.noteGeneral,
+          '回報時間': new Date().toLocaleString('zh-TW'),
+        }
+      })
+    });
+    return response.ok;
+  } catch (e) {
+    console.error('Lark sync error:', e);
+    return false;
+  }
+}
+
+/* ============================================
+   Stats
+============================================ */
+function refreshStats() {
+  const groups = Object.keys(reportData);
+
+  // Count reported
+  document.getElementById('stat-reported').textContent = groups.length;
+
+  // Pending groups
+  const reported = new Set(groups);
+  const allGroups = ['1','2','3','4','5','6','7','8','9'];
+  const pending = allGroups.filter(g => !reported.has(g));
+  document.getElementById('pending-groups').innerHTML = pending.length > 0
+    ? pending.map(g => `<span class="pending-tag">第${g}組</span>`).join('')
+    : '<span class="all-done">✨ 所有組別都已回報！</span>';
+
+  // 6/3 and 6/10 totals
+  let total63 = 0, total610 = 0;
+  const locStats63 = {};
+  const locStats610 = {};
+
+  allGroups.forEach(g => {
+    if (!reportData[g]) return;
+    const d = reportData[g];
+    if (d.j63.participate === '是') {
+      total63 += d.j63.participants.length;
+      const loc = d.j63.location;
+      if (!locStats63[loc]) locStats63[loc] = { groups: [], count: 0 };
+      locStats63[loc].groups.push(g);
+      locStats63[loc].count += d.j63.participants.length;
+    }
+    if (d.j610.participate === '是') {
+      total610 += d.j610.participants.length;
+      const loc = d.j610.location;
+      if (!locStats610[loc]) locStats610[loc] = { groups: [], count: 0 };
+      locStats610[loc].groups.push(g);
+      locStats610[loc].count += d.j610.participants.length;
+    }
+  });
+
+  document.getElementById('stat-63').textContent = total63;
+  document.getElementById('stat-610').textContent = total610;
+
+  // Location stats
+  renderLocationStats('63', locStats63);
+  renderLocationStats('610', locStats610);
+
+  // Group table
+  renderGroupTable();
+}
+
+function renderLocationStats(key, stats) {
+  const container = document.getElementById(`stats-${key}-locations`);
+  const locs = locationSettings[key];
+
+  let html = '';
+  locs.forEach(loc => {
+    const s = stats[loc.code] || { groups: [], count: 0 };
+    const groupList = s.groups.length > 0
+      ? s.groups.map(g => `第${g}組`).join('、')
+      : '（無）';
+    html += `
+      <div class="location-group">
+        <h4>${loc.code}｜${loc.name || '（待設定）'}</h4>
+        <div class="location-row">
+          <span class="location-name">${s.count}人</span>
+          <span class="location-info">${groupList}</span>
+        </div>
+        ${loc.meet && loc.meet !== '（待設定）' ? `<div class="location-row"><span class="location-name">集合</span><span class="location-info">${loc.meet}</span></div>` : ''}
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function renderGroupTable() {
+  const tbody = document.getElementById('group-table-body');
+  const allGroups = ['1','2','3','4','5','6','7','8','9'];
+
+  tbody.innerHTML = allGroups.map(g => {
+    const d = reportData[g];
+    if (!d) {
+      return `<tr><td>${g}</td><td colspan="8" style="color:var(--text-light)">（未回報）</td></tr>`;
+    }
+    return `<tr>
+      <td>${g}</td>
+      <td>${d.leaderName}</td>
+      <td>${d.j63.participate === '是' ? d.j63.location : '—'}</td>
+      <td>${d.j63.meetPoint || '—'}</td>
+      <td>${d.j63.participate === '是' ? d.j63.participants.length : '—'}</td>
+      <td>${d.j610.participate === '是' ? d.j610.location : '—'}</td>
+      <td>${d.j610.meetPoint || '—'}</td>
+      <td>${d.j610.participate === '是' ? d.j610.participants.length : '—'}</td>
+      <td>${d.noteGeneral || ''}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ============================================
+   Export
+============================================ */
+function exportCSV() {
+  const allGroups = ['1','2','3','4','5','6','7','8','9'];
+  const header = ['組別','組學員長','聯絡方式','6/3參與','6/3地點','6/3集合地點','6/3人數','6/3人員','6/10參與','6/10地點','6/10集合地點','6/10人數','6/10人員','備註'];
+  const rows = [header];
+
+  allGroups.forEach(g => {
+    const d = reportData[g];
+    if (!d) {
+      rows.push([g,'','','','','','','','','','','','','']);
+    } else {
+      rows.push([
+        g,
+        d.leaderName,
+        d.contact,
+        d.j63.participate,
+        d.j63.location,
+        d.j63.meetPoint,
+        d.j63.participate === '是' ? d.j63.participants.length : 0,
+        d.j63.participate === '是' ? d.j63.participants.join('、') : '',
+        d.j610.participate,
+        d.j610.location,
+        d.j610.meetPoint,
+        d.j610.participate === '是' ? d.j610.participants.length : 0,
+        d.j610.participate === '是' ? d.j610.participants.join('、') : '',
+        d.noteGeneral,
+      ]);
+    }
+  });
+
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  downloadFile(csv, 'dm-report.csv', 'text/csv');
+  showToast('✅ CSV 已下載');
+}
+
+function exportJSON() {
+  const json = JSON.stringify(reportData, null, 2);
+  downloadFile(json, 'dm-report.json', 'application/json');
+  showToast('✅ JSON 已下載');
+}
+
+function copyLineText() {
+  const allGroups = ['1','2','3','4','5','6','7','8','9'];
+  const reported = new Set(Object.keys(reportData));
+  const pending = allGroups.filter(g => !reported.has(g));
+
+  let total63 = 0, total610 = 0;
+  const locStats63 = {}, locStats610 = {};
+
+  allGroups.forEach(g => {
+    const d = reportData[g];
+    if (!d) return;
+    if (d.j63.participate === '是') {
+      total63 += d.j63.participants.length;
+      const loc = d.j63.location;
+      if (!locStats63[loc]) locStats63[loc] = [];
+      locStats63[loc].push({ group: g, names: d.j63.participants });
+    }
+    if (d.j610.participate === '是') {
+      total610 += d.j610.participants.length;
+      const loc = d.j610.location;
+      if (!locStats610[loc]) locStats610[loc] = [];
+      locStats610[loc].push({ group: g, names: d.j610.participants });
+    }
+  });
+
+  function formatLoc(stats, locs) {
+    return locs.map(loc => {
+      const entries = stats[loc.code] || [];
+      if (entries.length === 0) return `${loc.code}：\n（無）`;
+      return `${loc.code}：\n` + entries.map(e => `第${e.group}組：${e.names.join('、')}，共${e.names.length}人`).join('\n');
+    }).join('\n\n');
+  }
+
+  const pendingStr = pending.length > 0 ? `尚未回報組別：第${pending.join('組、第')}組` : '尚未回報組別：無';
+
+  const text = `【第61期初級禪修班招生｜三晚初發DM回報統計】
+
+一、6/3（三）晚上8:00～9:00
+總人數：${total63}人
+
+${formatLoc(locStats63, locationSettings['63'])}
+
+二、6/10（三）晚上8:00～9:00
+總人數：${total610}人
+
+${formatLoc(locStats610, locationSettings['610'])}
+
+${pendingStr}
+
+感恩各組學員長協助統計，阿彌陀佛。`;
+
+  navigator.clipboard.writeText(text).then(() => showToast('✅ 已複製到剪貼簿'));
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================
+   Copy announcement
+============================================ */
+function copyAnnouncement() {
+  const text = document.getElementById('announcement-text').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('✅ 公告文字已複製'));
+}
+
+/* ============================================
+   UI Helpers
+============================================ */
+function closeModal() {
+  document.getElementById('confirm-modal').classList.remove('show');
+}
+
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(() => { el.innerHTML = ''; }, 5000);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
