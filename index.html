@@ -1,878 +1,850 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>第61期初級禪修班｜三晚初發DM回報系統</title>
-  <style>
-    /* ============================================
-       CSS Variables & Reset（手機優先）
-    ============================================ */
-    :root {
-      --primary: #1a3a5c;
-      --primary-light: #2d5a87;
-      --secondary: #8b7355;
-      --accent: #c9a96e;
-      --bg: #faf6f0;
-      --card: #ffffff;
-      --text: #2c2c2c;
-      --text-light: #666;
-      --border: #e0d5c5;
-      --success: #4a7c59;
-      --danger: #a04040;
-      --warning: #b8860b;
-      --orange: #e65100;
-      --radius: 14px;
-      --shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>第61期初級禪修班｜三晚初發DM回報系統</title>
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #1a3557;
+  --navy-light: #2d5a8a;
+  --cream: #fdf6e3;
+  --cream-dark: #f5edd6;
+  --gold: #c8963e;
+  --gold-light: #e8b85a;
+  --text: #2c2c2c;
+  --text-light: #5a5a5a;
+  --border: #d4c5a9;
+  --success: #4a7c59;
+  --danger: #a04040;
+  --white: #ffffff;
+  --shadow: 0 2px 8px rgba(0,0,0,0.1);
+  --radius: 12px;
+}
+html { font-size: 16px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  line-height: 1.6;
+}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 18px; }
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: var(--white);
+  padding: 18px 16px 14px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.header h1 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.header .subtitle {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  letter-spacing: 1px;
+}
+.header .leader-badge {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--white);
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-top: 6px;
+  font-weight: 600;
+}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      min-height: 100vh;
-      padding-bottom: 90px;
-      -webkit-text-size-adjust: 100%;
-    }
+/* ============================================================
+   TABS
+   ============================================================ */
+.tabs {
+  display: flex;
+  background: var(--navy);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  position: sticky;
+  top: 70px;
+  z-index: 99;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 1 0 auto;
+  min-width: 72px;
+  padding: 12px 8px;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.tab-btn.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold-light);
+  font-weight: 600;
+}
 
-    /* ============================================
-       Header
-    ============================================ */
-    .header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      color: white;
-      padding: 18px 16px 16px;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
-    }
-    .header h1 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-    }
-    .header .subtitle {
-      font-size: 0.9rem;
-      opacity: 0.85;
-      margin-top: 4px;
-    }
+/* ============================================================
+   PANELS
+   ============================================================ */
+.panel { display: none; padding: 16px; max-width: 760px; margin: 0 auto; }
+.panel.active { display: block; }
 
-    /* ============================================
-       Tab Navigation
-    ============================================ */
-    .tabs {
-      display: flex;
-      background: var(--card);
-      border-bottom: 2px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-    }
-    .tabs::-webkit-scrollbar { display: none; }
+/* ============================================================
+   SHARED COMPONENTS
+   ============================================================ */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-title .icon { font-size: 1.1rem; }
 
-    .tab {
-      flex: 1;
-      min-width: 80px;
-      padding: 14px 10px;
-      text-align: center;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-light);
-      cursor: pointer;
-      border: none;
-      background: none;
-      border-bottom: 4px solid transparent;
-      transition: color 0.2s, border-color 0.2s;
-      white-space: nowrap;
-      scroll-snap-align: start;
-    }
-    .tab.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
+.section-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 14px 0 8px;
+  padding-left: 8px;
+  border-left: 4px solid var(--gold);
+}
+.section-label:first-child { margin-top: 0; }
 
-    /* ============================================
-       Page Sections
-    ============================================ */
-    .page { display: none; padding: 16px; max-width: 680px; margin: 0 auto; }
-    .page.active { display: block; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-primary {
+  background: var(--navy);
+  color: var(--white);
+  width: 100%;
+}
+.btn-primary:active { background: var(--navy-light); transform: scale(0.98); }
+.btn-secondary {
+  background: var(--cream-dark);
+  color: var(--navy);
+  border: 2px solid var(--border);
+}
+.btn-secondary:active { background: var(--cream); transform: scale(0.98); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--white);
+  width: 100%;
+}
+.btn-gold:active { background: var(--gold-light); transform: scale(0.98); }
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  width: auto;
+}
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
-    /* ============================================
-       Typography
-    ============================================ */
-    h1 { font-size: 1.5rem; font-weight: 700; }
-    h2 { font-size: 1.25rem; font-weight: 700; }
-    h3 { font-size: 1.1rem; font-weight: 600; }
-    p  { font-size: 1rem; line-height: 1.8; margin-bottom: 10px; }
-    small { font-size: 0.85rem; }
+.toggle-group {
+  display: flex;
+  gap: 0;
+  background: var(--cream-dark);
+  border-radius: var(--radius);
+  padding: 3px;
+  border: 2px solid var(--border);
+}
+.toggle-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--text-light);
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.toggle-btn.active {
+  background: var(--navy);
+  color: var(--white);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
 
-    /* ============================================
-       Cards
-    ============================================ */
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-    .card-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--border);
-    }
+select, input[type="text"], input[type="tel"], textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--white);
+  color: var(--text);
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+select:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--navy-light);
+}
+textarea { resize: vertical; min-height: 80px; }
 
-    /* ============================================
-       Hero CTA Button（首頁主按鈕）
-    ============================================ */
-    .hero-btn {
-      display: block;
-      width: 100%;
-      padding: 18px 24px;
-      font-size: 1.15rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--success) 0%, #5a9469 100%);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(74,124,89,0.35);
-      transition: transform 0.15s, box-shadow 0.15s;
-      text-align: center;
-      margin-bottom: 14px;
-    }
-    .hero-btn:active { transform: scale(0.97); }
+.form-group { margin-bottom: 14px; }
+.form-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.form-hint {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.form-error {
+  font-size: 0.82rem;
+  color: var(--danger);
+  margin-top: 4px;
+  display: none;
+}
+.form-error.show { display: block; }
 
-    /* ============================================
-       Date Event Cards（首頁日期卡片）
-    ============================================ */
-    .event-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      border-left: 5px solid var(--primary);
-    }
-    .event-card.date-2 { border-left-color: var(--secondary); }
-    .event-card .event-date {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-    .event-card.date-2 .event-date { color: var(--secondary); }
-    .event-card .event-locations {
-      font-size: 0.95rem;
-      color: var(--text-light);
-      margin-top: 4px;
-    }
+/* ============================================================
+   ANNOUNCEMENT PANEL (Tab 0)
+   ============================================================ */
+.notice-box {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 14px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.notice-box strong { color: var(--gold-light); }
+.notice-box .notice-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--gold-light);
+  text-align: center;
+}
+.notice-box ul { padding-left: 18px; }
+.notice-box li { margin-bottom: 5px; }
 
-    /* ============================================
-       Collapsible Sections（可展開收合區塊）
-    ============================================ */
-    .collapse-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 2px;
-      transition: background 0.15s;
-    }
-    .collapse-toggle:hover { background: #f5f0e8; }
-    .collapse-toggle .arrow {
-      font-size: 0.85rem;
-      transition: transform 0.25s;
-    }
-    .collapse-toggle.open .arrow { transform: rotate(180deg); }
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.info-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 12px;
+  text-align: center;
+  border: 2px solid var(--border);
+}
+.info-card .info-date {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.info-card .info-time {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+.info-card .info-locations {
+  font-size: 0.82rem;
+  color: var(--gold);
+  font-weight: 600;
+  margin-top: 4px;
+}
 
-    .collapse-content {
-      display: none;
-      padding: 14px 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-top: none;
-      border-radius: 0 0 var(--radius) var(--radius);
-      margin-bottom: 14px;
-    }
-    .collapse-content.open { display: block; }
+.announcement-copy-area {
+  background: var(--cream-dark);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-top: 14px;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--text);
+}
 
-    /* ============================================
-       Notice / Reminder Cards
-    ============================================ */
-    .reminder-card {
-      background: #fff9e6;
-      border: 1px solid #e6d5a8;
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .reminder-card .reminder-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--warning);
-      margin-bottom: 8px;
-    }
-    .reminder-card ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-    .reminder-card li {
-      font-size: 0.95rem;
-      line-height: 1.7;
-      margin-bottom: 5px;
-      color: #5a4a2a;
-    }
+/* ============================================================
+   FORM PANEL (Tab 1)
+   ============================================================ */
+.form-intro {
+  background: var(--cream-dark);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  color: var(--navy);
+  border-left: 4px solid var(--gold);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
 
-    .info-card {
-      background: #e8f0ff;
-      border: 1px solid #a0b8e8;
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-    .info-card .info-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #2d5a87;
-      margin-bottom: 8px;
-    }
+.date-section {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.date-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--gold);
+}
+.date-badge {
+  background: var(--navy);
+  color: var(--white);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.date-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+}
 
-    /* ============================================
-       Form Elements（手機優先尺寸）
-    ============================================ */
-    label {
-      display: block;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .required::after { content: ' *'; color: var(--danger); }
+/* Location big buttons */
+.location-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.loc-btn {
+  flex: 1;
+  min-width: 90px;
+  padding: 14px 8px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.loc-btn:active { transform: scale(0.97); }
+.loc-btn.selected {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--white);
+  box-shadow: 0 3px 8px rgba(26,53,87,0.3);
+}
+.loc-btn .loc-code {
+  font-size: 1.2rem;
+  font-weight: 800;
+  display: block;
+}
+.loc-btn .loc-name {
+  font-size: 0.72rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.loc-btn.selected .loc-name { color: rgba(255,255,255,0.8); }
 
-    input[type="text"],
-    input[type="tel"],
-    input[type="email"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 14px 14px;
-      font-size: 1rem;
-      font-family: inherit;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--text);
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-      line-height: 1.5;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    input::placeholder, textarea::placeholder { color: #bbb; font-size: 0.95rem; }
-    textarea { resize: vertical; min-height: 100px; }
+/* Roster checkboxes */
+.roster-section {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+}
+.roster-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.roster-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.roster-count {
+  font-size: 0.82rem;
+  color: var(--text-light);
+}
+.roster-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.roster-action-btn {
+  padding: 5px 10px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--white);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--navy);
+  font-weight: 600;
+}
+.roster-action-btn:active { background: var(--cream-dark); }
+.roster-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.roster-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 48px;
+  gap: 10px;
+}
+.roster-item:active { background: var(--cream-dark); }
+.roster-item.checked {
+  background: #e8f0e8;
+  border-color: var(--success);
+}
+.roster-item input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: var(--success);
+  flex-shrink: 0;
+}
+.roster-item .member-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.roster-item.checked .member-name { color: var(--success); font-weight: 600; }
 
-    .form-group { margin-bottom: 16px; }
+/* Extra participants */
+.extra-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+.extra-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
 
-    /* ============================================
-       Toggle Buttons（是/否 大按鈕）
-    ============================================ */
-    .toggle-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .toggle-btn {
-      flex: 1;
-      padding: 14px 8px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      border: 2.5px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      color: var(--text-light);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-    }
-    .toggle-btn.selected {
-      border-color: var(--primary);
-      background: var(--primary);
-      color: white;
-    }
-    .toggle-btn.selected.no {
-      border-color: var(--danger);
-      background: var(--danger);
-    }
-    .toggle-btn:active { transform: scale(0.96); }
+/* Confirm dialog */
+#confirmDialog {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+}
+#confirmDialog.show { display: flex; }
+.confirm-sheet {
+  background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 24px 20px 32px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.confirm-sheet h3 {
+  font-size: 1.05rem;
+  color: var(--navy);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+}
+.confirm-row .label { color: var(--text-light); }
+.confirm-row .value { font-weight: 600; color: var(--text); text-align: right; max-width: 60%; }
+.confirm-divider { height: 1px; background: var(--border); margin: 10px 0; }
 
-    /* ============================================
-       Location Big Buttons（地點大按鈕選擇）
-    ============================================ */
-    .loc-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .loc-btn {
-      padding: 14px 8px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border: 2.5px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-      line-height: 1.4;
-    }
-    .loc-btn .loc-code {
-      display: block;
-      font-size: 1.2rem;
-      margin-bottom: 2px;
-    }
-    .loc-btn .loc-hint {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--text-light);
-      margin-top: 2px;
-    }
-    .loc-btn.selected {
-      border-color: var(--primary);
-      background: var(--primary);
-      color: white;
-    }
-    .loc-btn.selected .loc-hint { color: rgba(255,255,255,0.8); }
-    .loc-btn:active { transform: scale(0.96); }
-    .loc-btn.disabled {
-      opacity: 0.4;
-      pointer-events: none;
-    }
+/* ============================================================
+   STATS PANEL (Tab 2)
+   ============================================================ */
+.stats-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.stat-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+}
+.stat-label { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; }
+.stat-card.highlight { border-color: var(--gold); background: linear-gradient(135deg, #fff9f0, var(--white)); }
+.stat-card.highlight .stat-number { color: var(--gold); }
 
-    /* ============================================
-       Participant List（參與人員）
-    ============================================ */
-    .participant-section {
-      margin-bottom: 14px;
-    }
-    .participant-list {
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-      background: #fff;
-      min-height: 52px;
-    }
-    .participant-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .participant-item:last-child { border-bottom: none; }
-    .participant-item span {
-      flex: 1;
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-    .participant-item .del-btn {
-      background: var(--danger);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .add-participant {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .add-participant input { flex: 1; min-height: 48px; }
-    .add-participant .btn-add {
-      min-height: 48px;
-      padding: 0 18px;
-      background: var(--success);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .empty-participants {
-      color: var(--text-light);
-      font-size: 0.95rem;
-      padding: 4px 0;
-    }
+.stats-section {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.stats-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold);
+}
+.location-stat {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.location-stat:last-child { border-bottom: none; }
+.loc-stat-code {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--navy);
+  width: 50px;
+  flex-shrink: 0;
+}
+.loc-stat-info { flex: 1; }
+.loc-stat-count {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.loc-stat-groups {
+  font-size: 0.78rem;
+  color: var(--text-light);
+}
+.loc-stat-empty { font-size: 0.85rem; color: var(--text-light); font-style: italic; }
 
-    /* ============================================
-       Section Dividers in Form
-    ============================================ */
-    .form-section-header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      color: white;
-      padding: 14px 16px;
-      border-radius: var(--radius);
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin: 20px 0 14px;
-      text-align: center;
-    }
-    .form-section-header.second {
-      background: linear-gradient(135deg, var(--secondary) 0%, #a08060 100%);
-    }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  min-width: 600px;
+}
+th {
+  background: var(--navy);
+  color: var(--white);
+  padding: 10px 8px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: var(--cream); }
+tr:last-child td { border-bottom: none; }
+.no-data td { color: var(--text-light); font-style: italic; }
 
-    /* ============================================
-       Toggle Details（是否參與切換）
-    ============================================ */
-    .toggle-details { margin-bottom: 14px; }
-    .toggle-details.hidden { display: none; }
+/* Export buttons */
+.export-section {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
 
-    /* ============================================
-       Stats Page
-    ============================================ */
-    .stats-hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .stat-box {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-    .stat-box .stat-num {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: var(--primary);
-      line-height: 1.1;
-    }
-    .stat-box .stat-label {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      margin-top: 4px;
-    }
-    .stat-box.highlight {
-      background: linear-gradient(135deg, var(--primary), var(--primary-light));
-      color: white;
-    }
-    .stat-box.highlight .stat-num { color: white; }
-    .stat-box.highlight .stat-label { color: rgba(255,255,255,0.8); }
+/* LINE copy area */
+#lineCopyArea {
+  background: var(--cream-dark);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-top: 10px;
+  display: none;
+  max-height: 300px;
+  overflow-y: auto;
+}
 
-    /* Location stats */
-    .loc-stat-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-    }
-    .loc-stat-header {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .loc-stat-header .count-badge {
-      background: var(--primary);
-      color: white;
-      font-size: 0.85rem;
-      padding: 2px 10px;
-      border-radius: 20px;
-    }
-    .loc-stat-row {
-      display: flex;
-      gap: 8px;
-      padding: 5px 0;
-      font-size: 0.95rem;
-      border-bottom: 1px dashed var(--border);
-    }
-    .loc-stat-row:last-child { border-bottom: none; }
-    .loc-stat-row .grp { font-weight: 600; min-width: 55px; }
-    .loc-stat-row .names { color: var(--text-light); flex: 1; }
-    .loc-stat-meet {
-      font-size: 0.85rem;
-      color: var(--text-light);
-      margin-top: 4px;
-    }
+/* ============================================================
+   SETTINGS PANEL (Tab 3)
+   ============================================================ */
+.location-setting-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 2px solid var(--border);
+}
+.location-setting-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy);
+}
+.location-setting-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.location-setting-grid .form-group { margin-bottom: 0; }
 
-    /* Group detail cards */
-    .group-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--primary);
-    }
-    .group-card.no-report {
-      border-left-color: var(--danger);
-      opacity: 0.7;
-    }
-    .group-card-header {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-    .group-card-row {
-      display: flex;
-      gap: 6px;
-      font-size: 0.9rem;
-      padding: 4px 0;
-      line-height: 1.5;
-    }
-    .group-card-row .label { font-weight: 600; min-width: 55px; }
-    .group-card-row .val { flex: 1; color: var(--text-light); }
-    .group-card-row .val.active { color: var(--success); font-weight: 600; }
+/* ============================================================
+   ROSTER PANEL (Tab 4)
+   ============================================================ */
+.roster-group-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.roster-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.roster-group-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+.roster-group-count {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  background: var(--cream-dark);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.roster-member-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.roster-member-tag {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
+  color: var(--text);
+}
+.import-export-section {
+  background: var(--cream-dark);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--border);
+}
+.import-area {
+  margin-top: 10px;
+}
+.import-area textarea {
+  font-size: 0.82rem;
+  min-height: 100px;
+  font-family: monospace;
+}
 
-    /* ============================================
-       Buttons
-    ============================================ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 14px 20px;
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: inherit;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      -webkit-tap-highlight-color: transparent;
-      line-height: 1.4;
-    }
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    .btn-primary:hover { background: var(--primary-light); }
-    .btn-primary:active { transform: scale(0.97); }
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--navy);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 300;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-    .btn-success:hover { background: #5a9469; }
-    .btn-success:active { transform: scale(0.97); }
+/* ============================================================
+   BOTTOM NAV HINT
+   ============================================================ */
+.bottom-hint {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 8px;
+}
 
-    .btn-outline {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-    }
-    .btn-outline:active { background: var(--primary); color: white; }
-
-    .btn-secondary {
-      background: var(--secondary);
-      color: white;
-    }
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-
-    .btn-block { width: 100%; }
-    .btn-lg {
-      padding: 16px 24px;
-      font-size: 1.1rem;
-    }
-
-    /* ============================================
-       Alert / Toast
-    ============================================ */
-    .alert {
-      padding: 14px 16px;
-      border-radius: 10px;
-      margin-bottom: 14px;
-      font-size: 1rem;
-      line-height: 1.6;
-    }
-    .alert-success { background: #e8f5e9; color: var(--success); border: 1px solid #a5d6a7; }
-    .alert-error   { background: #ffebee; color: var(--danger);  border: 1px solid #ef9a9a; }
-
-    .toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--primary);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 1rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s;
-      white-space: nowrap;
-    }
-    .toast.show { opacity: 1; }
-
-    /* ============================================
-       Modal（確認視窗）
-    ============================================ */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-      z-index: 200;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-      background: white;
-      border-radius: 20px 20px 0 0;
-      padding: 24px;
-      max-width: 680px;
-      width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-    .modal h3 { font-size: 1.15rem; margin-bottom: 14px; color: var(--primary); }
-    .modal-content { font-size: 1rem; line-height: 1.8; margin-bottom: 20px; }
-    .modal-actions { display: flex; gap: 10px; }
-    .modal-actions .btn { flex: 1; font-size: 1.05rem; padding: 16px; }
-
-    /* ============================================
-       Announcement Text
-    ============================================ */
-    .announcement-text {
-      background: #f5f0e8;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 0.95rem;
-      white-space: pre-wrap;
-      line-height: 2;
-      margin-bottom: 14px;
-    }
-
-    /* ============================================
-       Export Buttons
-    ============================================ */
-    .export-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* ============================================
-       Settings Page
-    ============================================ */
-    .settings-warning {
-      background: #fff3e0;
-      border: 1px solid #ffb74d;
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      margin-bottom: 14px;
-      font-size: 0.95rem;
-      color: var(--orange);
-    }
-    .settings-warning strong { font-size: 1rem; }
-
-    .location-setting-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 10px;
-    }
-    .location-setting-header {
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-
-    /* Advanced settings (collapsed) */
-    .advanced-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      background: #f5f0e8;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--secondary);
-      margin-top: 8px;
-    }
-    .advanced-toggle .arrow { transition: transform 0.25s; font-size: 0.8rem; }
-    .advanced-toggle.open .arrow { transform: rotate(180deg); }
-    .advanced-content { display: none; padding: 14px 0 4px; }
-    .advanced-content.open { display: block; }
-
-    /* ============================================
-       Pending Groups
-    ============================================ */
-    .pending-groups { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pending-tag {
-      background: #ffebee;
-      color: var(--danger);
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-    .all-done-tag {
-      background: #e8f5e9;
-      color: var(--success);
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    /* ============================================
-       Responsive
-    ============================================ */
-    @media (min-width: 640px) {
-      html { font-size: 17px; }
-      .page { padding: 24px; }
-      .card { padding: 22px; }
-      .loc-grid { grid-template-columns: repeat(3, 1fr); }
-      .export-grid { flex-direction: row; flex-wrap: wrap; }
-      .export-grid .btn { flex: 1; min-width: 140px; }
-      .modal { border-radius: 20px; align-items: center; max-width: 500px; }
-      .modal-actions .btn { flex: none; width: auto; padding: 14px 24px; }
-    }
-
-    /* hide native radio/checkbox visually */
-    .sr-only {
-      position: absolute; width: 1px; height: 1px;
-      padding: 0; margin: -1px; overflow: hidden;
-      clip: rect(0,0,0,0); border: 0;
-    }
-  </style>
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 480px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .stats-summary { grid-template-columns: 1fr 1fr; }
+  .location-setting-grid { grid-template-columns: 1fr; }
+  .confirm-sheet { padding: 18px 16px 28px; }
+}
+</style>
 </head>
 <body>
 
-<!-- ============================================
-     Header
-============================================ -->
-<div class="header">
-  <h1>🪷 第61期初級禪修班｜三晚初發DM回報系統</h1>
-  <div class="subtitle">總學員長：蔡耀文</div>
-</div>
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+  <h1>第61期初級禪修班｜三晚初</h1>
+  <div class="subtitle">發放 DM 與面紙包回報系統</div>
+  <div class="leader-badge">👑 總學員長：蔡耀文</div>
+</header>
 
-<!-- ============================================
-     Tabs
-============================================ -->
-<nav class="tabs">
-  <button class="tab active" data-tab="announce">📋 說明</button>
-  <button class="tab" data-tab="form">📝 填寫回報</button>
-  <button class="tab" data-tab="stats">📊 統計</button>
-  <button class="tab" data-tab="settings">⚙️ 地點設定</button>
+<!-- ============================================================
+     TABS
+     ============================================================ -->
+<nav class="tabs" id="tabNav">
+  <button class="tab-btn active" data-tab="0">📋 公告說明</button>
+  <button class="tab-btn" data-tab="1">✏️ 學員長回報</button>
+  <button class="tab-btn" data-tab="2">📊 統計總表</button>
+  <button class="tab-btn" data-tab="3">📍 地點設定</button>
+  <button class="tab-btn" data-tab="4">👥 學員名冊</button>
 </nav>
 
-<!-- ============================================
-     Page 1: 公告說明（首頁）
-============================================ -->
-<div id="page-announce" class="page active">
+<!-- ============================================================
+     PANEL 0: ANNOUNCEMENT
+     ============================================================ -->
+<div class="panel active" id="panel0">
 
-  <!-- 主 CTA 按鈕 -->
-  <button class="hero-btn" onclick="switchTab('form')">
-    📝 我要填寫回報
-  </button>
-
-  <!-- 提醒卡片 -->
-  <div class="reminder-card">
-    <div class="reminder-title">💡 填寫說明</div>
-    <ul>
-      <li>請各組學員長<strong>統計自己組內師兄</strong>後，再統一填寫</li>
-      <li>每組由學員長<strong>統一回報</strong>一次即可</li>
-      <li>若要修改資料，重新送出<strong>同組資料即可覆蓋更新</strong></li>
-      <li>鼓勵同一組師兄盡量選擇<strong>同一地點</strong></li>
-    </ul>
+  <div class="notice-box">
+    <div class="notice-title">活動宗旨</div>
+    為協助 <strong>第61期初級禪修班</strong> 招生，三晚初班在 <strong>6/3（三）</strong> 及 <strong>6/10（三）</strong> 晚上原上課時間，進行兩次發心，發放 DM 與面紙包，將禪修班資訊分享給更多有緣人。<br><br>
+    <strong>請各組學員長協助統計自己組內師兄，再統一送出回報。</strong>
   </div>
 
-  <!-- 活動日期卡片 -->
-  <h2 style="font-size:1.1rem;color:var(--primary);margin-bottom:8px;">📅 發放日程</h2>
-
-  <div class="event-card">
-    <div class="event-date">第一梯次｜6/3（三）晚上 8:00～9:00</div>
-    <div class="event-locations" id="announce-locs-63">載入中…</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-date">6/3（三）</div>
+      <div class="info-time">晚上 8:00～9:00</div>
+      <div class="info-locations" id="announceLocs1">園1 ｜ 賣2 ｜ 聯1</div>
+    </div>
+    <div class="info-card">
+      <div class="info-date">6/10（三）</div>
+      <div class="info-time">晚上 8:00～9:00</div>
+      <div class="info-locations" id="announceLocs2">掃1 ｜ 精2 ｜ 園2</div>
+    </div>
   </div>
 
-  <div class="event-card date-2">
-    <div class="event-date">第二梯次｜6/10（三）晚上 8:00～9:00</div>
-    <div class="event-locations" id="announce-locs-610">載入中…</div>
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠️</span> 注意事項</div>
+    <ol style="padding-left:20px; font-size:0.88rem; line-height:1.9;">
+      <li>每次選 <strong>3 個不同地點</strong>讓學員登記。</li>
+      <li>精舍集合，或自行前往指定地點集合，圓滿後原地解散。</li>
+      <li>帶隊學長請於前一日備妥所有物料，結束後請帶回原位。</li>
+      <li>物料包含：背心紅色與藍色、面紙包、DM、基本資料表、筆、海報、看板等。</li>
+      <li>背心需清洗後才歸還。</li>
+      <li>到定點後，請拍團體照留念。</li>
+      <li>發放時請保持親切、自然、莊嚴，重點是結善緣，不勉強、不推銷。</li>
+      <li><strong>鼓勵同一組盡量選擇同一地點</strong>，方便集合、帶隊、領物資與彼此照應。</li>
+    </ol>
   </div>
 
-  <!-- 注意事項（可展開） -->
-  <button class="collapse-toggle" onclick="toggleCollapse(this)" type="button">
-    <span>📌 注意事項</span>
-    <span class="arrow">▼</span>
-  </button>
-  <div class="collapse-content">
-    <ul style="margin:0;padding-left:20px;">
-      <li style="margin-bottom:8px;font-size:0.95rem;">每次選<strong>3個不同地點</strong>讓學員登記</li>
-      <li style="margin-bottom:8px;font-size:0.95rem;">精舍集合，或自行前往指定地點集合，圓滿後原地解散</li>
-      <li style="margin-bottom:8px;font-size:0.95rem;">帶隊學長請於前一日備妥所有物料，結束後請帶回原位</li>
-      <li style="margin-bottom:8px;font-size:0.95rem;">物料包含：背心紅色與藍色、面紙包、DM、基本資料表、筆、海報、看板等</li>
-      <li style="margin-bottom:8px;font-size:0.95rem;">背心需清洗後才歸還</li>
-      <li style="margin-bottom:8px;font-size:0.95rem;">到定點後，請拍團體照留念</li>
-      <li style="margin-bottom:8px;font-size:0.95rem;">發放時請保持親切、自然、莊嚴，重點是結善緣，不勉強、不推銷</li>
-      <li style="font-size:0.95rem;"><strong>鼓勵同一組盡量選擇同一地點</strong>，方便集合、帶隊、領物資與彼此照應</li>
-    </ul>
-  </div>
-
-  <!-- LINE 公告文字（可展開） -->
-  <button class="collapse-toggle" onclick="toggleCollapse(this)" type="button">
-    <span>📋 LINE 群組公告文字</span>
-    <span class="arrow">▼</span>
-  </button>
-  <div class="collapse-content">
-    <div class="announcement-text" id="announcement-text">各位初級班師兄大家好，阿彌陀佛。
+  <div class="card">
+    <div class="card-title"><span class="icon">📢</span> LINE 群組公告文字</div>
+    <p style="font-size:0.82rem; color:var(--text-light); margin-bottom:10px;">
+      按「複製」按鈕，即可貼到 LINE 群組使用：
+    </p>
+    <button class="btn btn-secondary btn-sm" onclick="copyAnnouncement()">📋 複製公告文字</button>
+    <div class="announcement-copy-area" id="announcementText">各位初級班師兄大家好，阿彌陀佛。
 
 我是初級班總學員長蔡耀文。
 
@@ -889,1032 +861,1098 @@
 感恩各位師兄一起發心，讓更多有緣人有機會接觸禪修、認識佛法，也成就我們自己一份護持招生的功德。
 
 阿彌陀佛。</div>
-    <button class="btn btn-primary btn-block btn-lg" onclick="copyAnnouncement()">
-      📋 複製公告文字
-    </button>
-  </div>
-
-  <!-- Lark Base 連結（低調，放在最下面） -->
-  <div style="text-align:center;margin-top:8px;">
-    <button class="btn btn-outline btn-sm" style="font-size:0.85rem;padding:8px 14px;" onclick="switchTab('stats')">
-      📊 前往統計頁
-    </button>
   </div>
 
 </div>
 
-<!-- ============================================
-     Page 2: 學員長回報表單
-============================================ -->
-<div id="page-form" class="page">
-  <div id="form-alert"></div>
+<!-- ============================================================
+     PANEL 1: FORM
+     ============================================================ -->
+<div class="panel" id="panel1">
+  <div class="form-intro">
+    👉 <strong>請各組學員長</strong>先統計自己組內師兄的意願，再統一在此回報。<br>
+    👉 同一組師兄<strong>鼓勵選擇同一地點</strong>，方便集合與照應。
+  </div>
 
-  <form id="report-form" onsubmit="return handleSubmit(event)" novalidate>
+  <!-- Basic Info -->
+  <div class="card">
+    <div class="card-title"><span class="icon">👤</span> 基本資料</div>
 
-    <!-- 提醒橫幅 -->
-    <div class="reminder-card" style="margin-bottom:14px;">
-      <ul style="margin:0;padding-left:18px;">
-        <li style="font-size:0.95rem;">請先統計組內師兄，再統一填寫送出</li>
-        <li style="font-size:0.95rem;">同一組重複送出，系統會自動覆蓋為最新資料</li>
-      </ul>
+    <div class="form-group">
+      <label class="form-label">組別 <span style="color:var(--danger)">*</span></label>
+      <select id="groupNum" onchange="onGroupChange()">
+        <option value="">請選擇組別</option>
+        <option value="1">第1組</option>
+        <option value="2">第2組</option>
+        <option value="3">第3組</option>
+        <option value="4">第4組</option>
+        <option value="5">第5組</option>
+        <option value="6">第6組</option>
+        <option value="7">第7組</option>
+        <option value="8">第8組</option>
+        <option value="9">第9組</option>
+      </select>
+      <div class="form-error" id="errGroup">請選擇組別</div>
     </div>
 
-    <!-- 基本資料卡片 -->
-    <div class="card">
-      <div class="card-title">👤 基本資料</div>
+    <div class="form-group">
+      <label class="form-label">組學員長姓名 <span style="color:var(--danger)">*</span></label>
+      <input type="text" id="leaderName" placeholder="請填寫姓名">
+      <div class="form-error" id="errName">請填寫組學員長姓名</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">聯絡方式（LINE 名稱或電話）</label>
+      <input type="text" id="contact" placeholder="非必填">
+    </div>
+  </div>
+
+  <!-- 6/3 Section -->
+  <div class="date-section">
+    <div class="date-section-header">
+      <span class="date-badge">6/3（三）</span>
+      <span class="date-section-title">晚上 8:00～9:00</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">是否參與 6/3 發心？</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="d1ActiveYes" onclick="setD1Active(true)">✅ 參與</button>
+        <button class="toggle-btn" id="d1ActiveNo" onclick="setD1Active(false)">❌ 不參與</button>
+      </div>
+    </div>
+
+    <div id="d1Fields">
       <div class="form-group">
-        <label class="required">組別</label>
-        <select id="group" required onchange="loadGroupData()">
-          <option value="">請選擇組別</option>
-          <option value="1">第1組</option>
-          <option value="2">第2組</option>
-          <option value="3">第3組</option>
-          <option value="4">第4組</option>
-          <option value="5">第5組</option>
-          <option value="6">第6組</option>
-          <option value="7">第7組</option>
-          <option value="8">第8組</option>
-          <option value="9">第9組</option>
-        </select>
+        <label class="form-label">選擇地點</label>
+        <div class="location-btns" id="d1LocationBtns"></div>
+        <div class="form-error" id="errD1Loc">請選擇 6/3 地點</div>
       </div>
+
       <div class="form-group">
-        <label class="required">組學員長姓名</label>
-        <input type="text" id="leader-name" placeholder="請輸入您的姓名" required>
+        <label class="form-label">集合地點說明</label>
+        <input type="text" id="d1Meet" placeholder="請填寫實際集合地點">
       </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>聯絡方式</label>
-        <input type="text" id="contact" placeholder="LINE 名稱或電話（非必填）">
+
+      <div class="form-group">
+        <label class="form-label">參與人員名單 <span style="color:var(--danger)">*</span></label>
+        <div class="roster-section" id="d1RosterSection">
+          <div class="roster-header">
+            <span class="roster-label" id="d1RosterLabel">請先選擇組別</span>
+            <span class="roster-count" id="d1RosterCount"></span>
+          </div>
+          <div class="roster-actions" id="d1RosterActions" style="display:none;">
+            <button class="roster-action-btn" onclick="selectAll('d1')">全選</button>
+            <button class="roster-action-btn" onclick="clearAll('d1')">清除</button>
+          </div>
+          <div class="roster-grid" id="d1RosterGrid">
+            <div style="padding:12px; color:var(--text-light); font-size:0.85rem;">請先選擇組別</div>
+          </div>
+          <div class="extra-section">
+            <div class="extra-label">➕ 其他人員（不在名冊中）</div>
+            <textarea id="d1Extra" rows="2" placeholder="一行一位，例：張三"></textarea>
+          </div>
+        </div>
+        <div class="form-error" id="errD1Members">請至少勾選一位參與人員</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">備註</label>
+        <textarea id="d1Note" rows="2" placeholder="其他需告知的事項"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6/10 Section -->
+  <div class="date-section">
+    <div class="date-section-header">
+      <span class="date-badge">6/10（三）</span>
+      <span class="date-section-title">晚上 8:00～9:00</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">是否參與 6/10 發心？</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="d2ActiveYes" onclick="setD2Active(true)">✅ 參與</button>
+        <button class="toggle-btn" id="d2ActiveNo" onclick="setD2Active(false)">❌ 不參與</button>
       </div>
     </div>
 
-    <!-- ===== 6/3 第一梯次 ===== -->
-    <div class="form-section-header">第一梯次｜6/3（三）晚上 8:00～9:00</div>
-
-    <div class="card">
-      <div class="card-title" style="font-size:1rem;">是否參與</div>
-      <div class="toggle-group" id="toggle-63">
-        <button type="button" class="toggle-btn" onclick="setToggle('63','是',this)">✅ 可以參與</button>
-        <button type="button" class="toggle-btn no" onclick="setToggle('63','否',this)">❌ 本週不方便</button>
+    <div id="d2Fields">
+      <div class="form-group">
+        <label class="form-label">選擇地點</label>
+        <div class="location-btns" id="d2LocationBtns"></div>
+        <div class="form-error" id="errD2Loc">請選擇 6/10 地點</div>
       </div>
-      <input type="radio" name="j63" value="是" id="j63-yes" class="sr-only" required>
-      <input type="radio" name="j63" value="否" id="j63-no"  class="sr-only">
 
-      <!-- 參與詳情（選擇「是」時顯示） -->
-      <div id="details-63" class="toggle-details hidden">
+      <div class="form-group">
+        <label class="form-label">集合地點說明</label>
+        <input type="text" id="d2Meet" placeholder="請填寫實際集合地點">
+      </div>
 
-        <div class="form-group">
-          <label class="required">選擇地點</label>
-          <div class="loc-grid" id="loc-grid-63">
-            <!-- 動態生成 -->
+      <div class="form-group">
+        <label class="form-label">參與人員名單 <span style="color:var(--danger)">*</span></label>
+        <div class="roster-section" id="d2RosterSection">
+          <div class="roster-header">
+            <span class="roster-label" id="d2RosterLabel">請先選擇組別</span>
+            <span class="roster-count" id="d2RosterCount"></span>
+          </div>
+          <div class="roster-actions" id="d2RosterActions" style="display:none;">
+            <button class="roster-action-btn" onclick="selectAll('d2')">全選</button>
+            <button class="roster-action-btn" onclick="clearAll('d2')">清除</button>
+          </div>
+          <div class="roster-grid" id="d2RosterGrid">
+            <div style="padding:12px; color:var(--text-light); font-size:0.85rem;">請先選擇組別</div>
+          </div>
+          <div class="extra-section">
+            <div class="extra-label">➕ 其他人員（不在名冊中）</div>
+            <textarea id="d2Extra" rows="2" placeholder="一行一位，例：張三"></textarea>
           </div>
         </div>
+        <div class="form-error" id="errD2Members">請至少勾選一位參與人員</div>
+      </div>
 
-        <div class="form-group">
-          <label>集合地點說明</label>
-          <input type="text" id="meet63" placeholder="請填寫實際集合地點（如：西門捷運站1號出口）">
-        </div>
-
-        <div class="participant-section">
-          <label class="required">參與人員名單</label>
-          <div class="participant-list" id="participants-63">
-            <div class="empty-participants">尚無參與人員，請新增</div>
-          </div>
-          <div class="add-participant">
-            <input type="text" id="input-63" placeholder="輸入姓名後按新增">
-            <button type="button" class="btn-add" onclick="addParticipant('63')">＋ 新增</button>
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom:0;">
-          <label>備註</label>
-          <textarea id="note63" placeholder="任何補充說明（非必填）"></textarea>
-        </div>
+      <div class="form-group">
+        <label class="form-label">備註</label>
+        <textarea id="d2Note" rows="2" placeholder="其他需告知的事項"></textarea>
       </div>
     </div>
+  </div>
 
-    <!-- ===== 6/10 第二梯次 ===== -->
-    <div class="form-section-header second">第二梯次｜6/10（三）晚上 8:00～9:00</div>
+  <button class="btn btn-gold" onclick="showConfirm()">送出回報</button>
+  <div class="bottom-hint">填寫後如需修改，直接重新填寫送出即可更新</div>
 
-    <div class="card">
-      <div class="card-title" style="font-size:1rem;">是否參與</div>
-      <div class="toggle-group" id="toggle-610">
-        <button type="button" class="toggle-btn" onclick="setToggle('610','是',this)">✅ 可以參與</button>
-        <button type="button" class="toggle-btn no" onclick="setToggle('610','否',this)">❌ 本週不方便</button>
-      </div>
-      <input type="radio" name="j610" value="是" id="j610-yes" class="sr-only" required>
-      <input type="radio" name="j610" value="否" id="j610-no"  class="sr-only">
-
-      <!-- 參與詳情（選擇「是」時顯示） -->
-      <div id="details-610" class="toggle-details hidden">
-
-        <div class="form-group">
-          <label class="required">選擇地點</label>
-          <div class="loc-grid" id="loc-grid-610">
-            <!-- 動態生成 -->
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>集合地點說明</label>
-          <input type="text" id="meet610" placeholder="請填寫實際集合地點（如：西門捷運站1號出口）">
-        </div>
-
-        <div class="participant-section">
-          <label class="required">參與人員名單</label>
-          <div class="participant-list" id="participants-610">
-            <div class="empty-participants">尚無參與人員，請新增</div>
-          </div>
-          <div class="add-participant">
-            <input type="text" id="input-610" placeholder="輸入姓名後按新增">
-            <button type="button" class="btn-add" onclick="addParticipant('610')">＋ 新增</button>
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom:0;">
-          <label>備註</label>
-          <textarea id="note610" placeholder="任何補充說明（非必填）"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- 總備註 -->
-    <div class="card">
-      <div class="form-group" style="margin-bottom:0;">
-        <label>其他備註</label>
-        <textarea id="note-general" placeholder="針對兩週次或其他事項的補充（非必填）"></textarea>
-      </div>
-    </div>
-
-    <!-- 送出按鈕 -->
-    <button type="submit" class="btn btn-success btn-block btn-lg" style="margin-top:6px;">
-      ✅ 送出回報
-    </button>
-
-  </form>
 </div>
 
-<!-- ============================================
-     Page 3: 統計總表
-============================================ -->
-<div id="page-stats" class="page">
-  <div id="stats-alert"></div>
+<!-- ============================================================
+     PANEL 2: STATS
+     ============================================================ -->
+<div class="panel" id="panel2">
 
-  <!-- 數字統計區 -->
-  <div class="stats-hero">
-    <div class="stat-box highlight">
-      <div class="stat-num" id="stat-reported">0</div>
-      <div class="stat-label">已回報組數</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num">/9</div>
-      <div class="stat-label">總組數</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num" id="stat-63">0</div>
-      <div class="stat-label">6/3 參與人數</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num" id="stat-610">0</div>
-      <div class="stat-label">6/10 參與人數</div>
-    </div>
+  <div class="stats-summary" id="statsSummary">
+    <!-- filled by JS -->
   </div>
 
-  <!-- 尚未回報 -->
+  <div id="statsDetails">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="export-section">
+    <button class="btn btn-secondary btn-sm" onclick="exportCSV()">📥 匯出 CSV</button>
+    <button class="btn btn-secondary btn-sm" onclick="exportJSON()">📥 匯出 JSON</button>
+    <button class="btn btn-secondary btn-sm" onclick="showLineText()">📋 LINE 文字</button>
+    <button class="btn btn-secondary btn-sm" onclick="copyLineText()">📋 複製 LINE</button>
+  </div>
+  <div id="lineCopyArea"></div>
+
+</div>
+
+<!-- ============================================================
+     PANEL 3: LOCATION SETTINGS
+     ============================================================ -->
+<div class="panel" id="panel3">
+
   <div class="card">
-    <div class="card-title">⚠️ 尚未回報組別</div>
-    <div id="pending-groups" class="pending-groups"></div>
-  </div>
+    <div class="card-title"><span class="icon">📍</span> 地點代碼設定</div>
+    <p style="font-size:0.82rem; color:var(--text-light); margin-bottom:12px;">
+      設定各地點的完整資訊。代碼代號用於表單，系統會顯示完整資訊。
+    </p>
 
-  <!-- 6/3 各地點統計 -->
-  <div class="card">
-    <div class="card-title">📍 6/3 各地點統計</div>
-    <div id="stats-63-locations"></div>
-  </div>
-
-  <!-- 6/10 各地點統計 -->
-  <div class="card">
-    <div class="card-title">📍 6/10 各地點統計</div>
-    <div id="stats-610-locations"></div>
-  </div>
-
-  <!-- 各組明細（卡片式） -->
-  <div class="card">
-    <div class="card-title">👥 各組回報明細</div>
-    <div id="group-cards"></div>
-  </div>
-
-  <!-- 匯出 -->
-  <div class="card">
-    <div class="card-title">📤 匯出資料</div>
-    <div class="export-grid">
-      <button class="btn btn-primary" onclick="exportCSV()">📥 匯出 CSV</button>
-      <button class="btn btn-primary" onclick="exportJSON()">📥 匯出 JSON</button>
-      <button class="btn btn-secondary" style="grid-column:1/-1;" onclick="copyLineText()">📋 複製 LINE 統計文字</button>
+    <div id="locationSettings">
+      <!-- filled by JS -->
     </div>
-    <div style="text-align:center;margin-top:12px;">
-      <button class="btn btn-outline btn-sm" onclick="refreshStats()">🔄 重新整理統計</button>
-    </div>
-  </div>
 
-  <!-- Lark Base 連結（低調） -->
-  <div style="text-align:center;margin-top:4px;">
-    <a href="https://psgi7t86exuf.sg.larksuite.com/base/LiRqbp72naWKRRsMNYTl5cjTgof" target="_blank"
-       style="font-size:0.85rem;color:var(--text-light);text-decoration:underline;padding:8px;">
-      📊 開啟 Lark Base 統計表（新分頁）
-    </a>
+    <button class="btn btn-primary" style="margin-top:14px;" onclick="saveLocations()">💾 儲存地點設定</button>
   </div>
 
 </div>
 
-<!-- ============================================
-     Page 4: 地點設定
-============================================ -->
-<div id="page-settings" class="page">
-  <div id="settings-alert"></div>
+<!-- ============================================================
+     PANEL 4: ROSTER
+     ============================================================ -->
+<div class="panel" id="panel4">
 
-  <div class="settings-warning">
-    <strong>⚠️ 請先由總學員長填寫地點資訊</strong><br>
-    <small>「集合地點」需由總學員長填寫，各組學員長才能看到完整資訊。</small>
-  </div>
-
-  <!-- 6/3 地點設定 -->
-  <div class="card">
-    <div class="card-title">📍 6/3（三）地點設定</div>
-    <div id="settings-63"></div>
-  </div>
-
-  <!-- 6/10 地點設定 -->
-  <div class="card">
-    <div class="card-title">📍 6/10（三）地點設定</div>
-    <div id="settings-610"></div>
-  </div>
-
-  <!-- 儲存按鈕 -->
-  <button class="btn btn-primary btn-block btn-lg" onclick="saveLocationSettings()">
-    💾 儲存地點設定
-  </button>
-  <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="resetToDefaults()">
-    🔄 恢復預設
-  </button>
-
-  <!-- 進階設定（收合） -->
-  <button class="advanced-toggle" onclick="toggleCollapse(this)" type="button" style="margin-top:16px;">
-    <span>🔧 進階設定（Lark API）</span>
-    <span class="arrow">▼</span>
-  </button>
-  <div class="advanced-content">
-    <div class="card" style="margin-top:8px;">
-      <div class="form-group">
-        <label>Cloudflare Worker URL</label>
-        <input type="text" id="cf-worker-url" placeholder="留空則只使用本機儲存" onchange="saveSettings()">
-        <small style="color:var(--text-light);font-size:0.8rem;">用於同步到 Lark Base</small>
-      </div>
-      <div class="form-group">
-        <label>Lark App Token（Base ID）</label>
-        <input type="text" id="lark-app-token" value="LiRqbp72naWKRRsMNYTl5cjTgof" onchange="saveSettings()">
-      </div>
-      <div class="form-group" style="margin-bottom:0;">
-        <label>Lark Table ID</label>
-        <input type="text" id="lark-table-id" value="tblsnPYcOvzeoHMW" onchange="saveSettings()">
-      </div>
+  <div class="import-export-section">
+    <div class="card-title" style="font-size:0.95rem; margin-bottom:10px;">📤 匯出 / 📥 匯入名冊</div>
+    <div class="btn-group">
+      <button class="btn btn-secondary btn-sm" onclick="exportRosterJSON()">匯出 JSON</button>
+      <button class="btn btn-secondary btn-sm" onclick="showRosterImport()">匯入 JSON</button>
+    </div>
+    <div class="import-area" id="rosterImportArea" style="display:none;">
+      <textarea id="rosterImportText" rows="4" placeholder="貼上 JSON"></textarea>
+      <button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="importRosterJSON()">確認匯入</button>
     </div>
   </div>
+
+  <div id="rosterGroups">
+    <!-- filled by JS -->
+  </div>
+
 </div>
 
-<!-- ============================================
-     Confirm Modal（底部彈出）
-============================================ -->
-<div class="modal-overlay" id="confirm-modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
+<!-- ============================================================
+     CONFIRM DIALOG
+     ============================================================ -->
+<div id="confirmDialog">
+  <div class="confirm-sheet">
     <h3>✅ 確認回報內容</h3>
-    <div class="modal-content" id="confirm-content"></div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()">取消</button>
-      <button class="btn btn-success" onclick="confirmSubmit()">確認送出</button>
+    <div id="confirmContent"></div>
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn btn-secondary" style="flex:1;" onclick="closeConfirm()">返回修改</button>
+      <button class="btn btn-gold" style="flex:1;" onclick="submitForm()">確認送出</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<!-- ============================================================
+     TOAST
+     ============================================================ -->
+<div id="toast"></div>
 
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
 <script>
-/* ============================================
-   Constants & Config
-============================================ */
-const STORAGE_KEY = 'dm_report_data';
-const SETTINGS_KEY = 'dm_report_settings';
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
+
+// 學員名冊（從 Google Sheets 讀取）
+const STUDENT_ROSTER = {
+  "1": ["陳一朗(法昇)","吳炳錞","陳英杰(法審)","林長賢","李文國(法詮)","林睿皇","田鈞"],
+  "2": ["蕭日畯(法松)","蔡耀文(法果)","黃慶仁","何承祐(法擔)","賴貽祥","高政賢"],
+  "3": ["葉燈超(法燈)","邱建燁(法翱)","吳漳(傳堅)","張嘉年(法足)","楊東穎","江世傑","劉一淞","張書瑋","孫振一","蕭正浩"],
+  "4": ["葉金鳳(法經)","李素蘭(法洛)","簡維君(法緯)","游培廷","李佩燁","余美芳","錢玉雪(傳厘)","鐘柳存","陳麗妃","蔡麗梅(法菁)"],
+  "5": ["李卉羚(法本)","牛靖涵(傳郁)","黃品家(法敦)","連涵茵","林玲玲(法穩)","岳詩虹","李娟娟(法茜)","林惠伶(法登)"],
+  "6": ["張燕芬(法儀)","詹瑞貞(法持)","江美惠1(傳彿)","李玟嫺","李琇足","吳秀蘭","李姵儀(傳量)","部桂美(法議)","徐雅雯","徐雅芳","徐雅敏"],
+  "7": ["許藝娟(法慈)","曾雅蘭(傳昧)","賴素綿(法平)","林麗嬌(傳霈)","趙佳欣(法佳)","陳玉燕2(法穹)","張莉玲","黄憶如","李美玲(法致)","蔡旻蓉","陳文琪"],
+  "8": ["張雅雯(法空)","賴怡芳(法倢)","田品萱(法印)","黃湘婷(傳麗)","鄭秀美(法岫)","陳雅綺","廖雅婷(法清)","陳瑞金"],
+  "9": ["詹佩宜(法憫)","褚佩宜","邱黃秀枝(傳開)","李慧玲l(傳寬)","賴麗淑","籃慈雲(法護)","余家蓉","楊靜幸","許惠茹"]
+};
 
 const DEFAULT_LOCATIONS = {
-  '63': [
-    { code: '園1', name: '公園路一帶', meet: '', note: '' },
-    { code: '賣2', name: '賣場/市集', meet: '', note: '' },
-    { code: '聯1', name: '聯絡處/據點', meet: '', note: '' },
+  d1: [
+    { code: "園1", name: "", meet: "" },
+    { code: "賣2", name: "", meet: "" },
+    { code: "聯1", name: "", meet: "" }
   ],
-  '610': [
-    { code: '掃1', name: '掃街路線', meet: '', note: '' },
-    { code: '精2', name: '精舍/禪修中心', meet: '', note: '' },
-    { code: '園2', name: '公園路二帶', meet: '', note: '' },
+  d2: [
+    { code: "掃1", name: "", meet: "" },
+    { code: "精2", name: "", meet: "" },
+    { code: "園2", name: "", meet: "" }
   ]
 };
 
-/* ============================================
-   State
-============================================ */
-let reportData    = {};
-let locationSettings = {};
-let participants63  = [];
-let participants610 = [];
-let settings        = {};
-let selectedLoc63   = '';
-let selectedLoc610  = '';
+const STORAGE_KEY = 'dm_group_data';
+const LOC_KEY = 'dm_locations';
+const ROSTER_KEY = 'dm_student_roster';
 
-/* ============================================
-   Init
-============================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  // Load data
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) reportData = JSON.parse(saved);
+/* ============================================================
+   STATE
+   ============================================================ */
+let locations = {};
+let formData = {};
+let d1Active = true;
+let d2Active = true;
+let selectedD1 = null;
+let selectedD2 = null;
+let d1CheckedMembers = [];
+let d2CheckedMembers = [];
 
-  const savedSettings = localStorage.getItem(SETTINGS_KEY);
-  if (savedSettings) {
-    settings = JSON.parse(savedSettings);
-  } else {
-    settings = {
-      locations: JSON.parse(JSON.stringify(DEFAULT_LOCATIONS)),
-      cfWorkerUrl: '',
-      larkAppToken: 'LiRqbp72naWKRRsMNYTl5cjTgof',
-      larkTableId: 'tblsnPYcOvzeoHMW'
-    };
-  }
-  locationSettings = settings.locations;
-
-  // Tab click
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
-  });
-
-  // Init location selects & settings
-  renderLocationGrids();
+/* ============================================================
+   INIT
+   ============================================================ */
+function init() {
+  loadLocations();
   renderLocationSettings();
-  renderAnnounceLocations();
-
-  // Stats
-  refreshStats();
-});
-
-/* ============================================
-   Tab Navigation
-============================================ */
-function switchTab(tabId) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-  document.getElementById(`page-${tabId}`).classList.add('active');
-  if (tabId === 'stats') refreshStats();
-  window.scrollTo(0, 0);
+  renderLocationBtns();
+  renderAnnounceLocs();
+  renderRosterPanel();
+  renderStats();
+  loadGroupData();
 }
 
-/* ============================================
-   Collapsible Sections
-============================================ */
-function toggleCollapse(btn) {
-  btn.classList.toggle('open');
-  const content = btn.nextElementSibling;
-  content.classList.toggle('open');
-}
-
-/* ============================================
-   Location: Render big button grids in form
-============================================ */
-function renderLocationGrids() {
-  ['63', '610'].forEach(key => {
-    const container = document.getElementById(`loc-grid-${key}`);
-    container.innerHTML = '';
-    locationSettings[key].forEach(loc => {
-      const meetHint = loc.meet ? loc.meet : '⚠️ 需設定集合地點';
-      const html = `
-        <button type="button" class="loc-btn" data-key="${key}" data-code="${loc.code}" onclick="selectLoc('${key}','${loc.code}',this)">
-          <span class="loc-code">${loc.code}</span>
-          <span class="loc-hint">${meetHint}</span>
-        </button>`;
-      container.insertAdjacentHTML('beforeend', html);
-    });
-  });
-}
-
-function selectLoc(key, code, btn) {
-  // Remove selected from siblings
-  const grid = document.getElementById(`loc-grid-${key}`);
-  grid.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  if (key === '63') selectedLoc63 = code;
-  else selectedLoc610 = code;
-}
-
-/* ============================================
-   Announcement page: date cards
-============================================ */
-function renderAnnounceLocations() {
-  function buildLocList(key) {
-    return locationSettings[key].map(l => {
-      const meet = l.meet ? `集合：${l.meet}` : '⚠️ 需至「地點設定」填寫集合地點';
-      return `　${l.code}｜${l.name}（${meet}）`;
-    }).join('\n');
-  }
-  const opts63  = { __html: buildLocList('63').replace(/\n/g, '<br>') };
-  const opts610 = { __html: buildLocList('610').replace(/\n/g, '<br>') };
-  document.getElementById('announce-locs-63').innerHTML = opts63.__html;
-  document.getElementById('announce-locs-610').innerHTML = opts610.__html;
-}
-
-/* ============================================
-   Toggle: 是/否 buttons
-============================================ */
-function setToggle(key, val, btn) {
-  // Set radio
-  document.getElementById(`j${key}-${val === '是' ? 'yes' : 'no'}`).checked = true;
-
-  // Style buttons
-  const group = document.getElementById(`toggle-${key}`);
-  group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-
-  // Show/hide details
-  const details = document.getElementById(`details-${key}`);
-  if (val === '是') {
-    details.classList.remove('hidden');
+/* ============================================================
+   LOCATIONS
+   ============================================================ */
+function loadLocations() {
+  const saved = localStorage.getItem(LOC_KEY);
+  if (saved) {
+    try { locations = JSON.parse(saved); } catch(e) { locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS)); }
   } else {
-    details.classList.add('hidden');
-    // Clear location selection
-    if (key === '63') selectedLoc63 = '';
-    else selectedLoc610 = '';
-    const grid = document.getElementById(`loc-grid-${key}`);
-    grid.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
+    locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
   }
 }
 
-/* ============================================
-   Location Settings page
-============================================ */
+function saveLocations() {
+  // Collect from DOM
+  const cards = document.querySelectorAll('.location-setting-card');
+  const d1 = [], d2 = [];
+  cards.forEach(card => {
+    const side = card.dataset.side;
+    const code = card.dataset.code;
+    const name = card.querySelector('.loc-name-input')?.value || '';
+    const meet = card.querySelector('.loc-meet-input')?.value || '';
+    const obj = { code, name, meet };
+    if (side === 'd1') d1.push(obj);
+    else d2.push(obj);
+  });
+  locations = { d1, d2 };
+  localStorage.setItem(LOC_KEY, JSON.stringify(locations));
+  renderLocationBtns();
+  renderAnnounceLocs();
+  renderStats();
+  toast('✅ 地點設定已儲存');
+}
+
 function renderLocationSettings() {
-  ['63', '610'].forEach(key => {
-    const container = document.getElementById(`settings-${key}`);
-    container.innerHTML = '';
-    locationSettings[key].forEach((loc, i) => {
-      const namePh = key === '63'
-        ? (loc.code === '園1' ? '例：台北車站西門廣場' : loc.code === '賣2' ? '例：家樂福' : '例：里民中心')
-        : (loc.code === '掃1' ? '例：忠孝東路沿線' : loc.code === '精2' ? '例：內湖精舍' : '例：公園路');
-      container.insertAdjacentHTML('beforeend', `
-        <div class="location-setting-card">
-          <div class="location-setting-header">📌 ${loc.code}｜${loc.name}</div>
-          <div class="form-group" style="margin-bottom:10px;">
-            <label>發放地點名稱</label>
-            <input type="text" id="loc-${key}-${i}-name" value="${escHtml(loc.name)}" placeholder="${namePh}">
+  const container = document.getElementById('locationSettings');
+  container.innerHTML = '';
+  const sides = [
+    { key: 'd1', label: '6/3（三）', places: locations.d1 || DEFAULT_LOCATIONS.d1 },
+    { key: 'd2', label: '6/10（三）', places: locations.d2 || DEFAULT_LOCATIONS.d2 }
+  ];
+  sides.forEach(side => {
+    const heading = document.createElement('div');
+    heading.style.cssText = 'font-size:0.88rem; font-weight:700; color:var(--navy); margin:12px 0 8px; padding-left:4px;';
+    heading.textContent = side.label;
+    container.appendChild(heading);
+
+    side.places.forEach(place => {
+      const card = document.createElement('div');
+      card.className = 'location-setting-card';
+      card.dataset.side = side.key;
+      card.dataset.code = place.code;
+      card.innerHTML = `
+        <div class="location-setting-header">
+          <span style="font-size:1.1rem; font-weight:800;">${place.code}</span>
+          <span style="font-size:0.82rem; color:var(--text-light);">${side.label}</span>
+        </div>
+        <div class="location-setting-grid">
+          <div class="form-group">
+            <label class="form-label" style="font-size:0.8rem;">發放地點名稱</label>
+            <input type="text" class="loc-name-input" value="${place.name}" placeholder="例：公園一號門">
           </div>
-          <div class="form-group" style="margin-bottom:10px;">
-            <label>集合地點（必填）</label>
-            <input type="text" id="loc-${key}-${i}-meet" value="${escHtml(loc.meet)}" placeholder="例：西門捷運站1號出口">
-          </div>
-          <div class="form-group" style="margin-bottom:0;">
-            <label>備註</label>
-            <input type="text" id="loc-${key}-${i}-note" value="${escHtml(loc.note || '')}" placeholder="其他補充（非必填）">
+          <div class="form-group">
+            <label class="form-label" style="font-size:0.8rem;">集合地點</label>
+            <input type="text" class="loc-meet-input" value="${place.meet}" placeholder="例：捷運站出口">
           </div>
         </div>
-      `);
+      `;
+      container.appendChild(card);
     });
   });
-
-  document.getElementById('cf-worker-url').value    = settings.cfWorkerUrl || '';
-  document.getElementById('lark-app-token').value  = settings.larkAppToken || '';
-  document.getElementById('lark-table-id').value    = settings.larkTableId || '';
 }
 
-function saveLocationSettings() {
-  ['63', '610'].forEach(key => {
-    locationSettings[key].forEach((loc, i) => {
-      loc.name = document.getElementById(`loc-${key}-${i}-name`).value.trim();
-      loc.meet = document.getElementById(`loc-${key}-${i}-meet`).value.trim();
-      loc.note = document.getElementById(`loc-${key}-${i}-note`).value.trim();
-    });
+function renderLocationBtns() {
+  renderBtnsForDate('d1', 'd1LocationBtns');
+  renderBtnsForDate('d2', 'd2LocationBtns');
+}
+
+function renderBtnsForDate(key, containerId) {
+  const container = document.getElementById(containerId);
+  const places = locations[key] || [];
+  container.innerHTML = '';
+  const selected = key === 'd1' ? selectedD1 : selectedD2;
+  places.forEach(place => {
+    const btn = document.createElement('button');
+    btn.className = 'loc-btn' + (selected === place.code ? ' selected' : '');
+    btn.dataset.code = place.code;
+    btn.dataset.key = key;
+    btn.onclick = () => selectLocation(key, place.code);
+    btn.innerHTML = `
+      <span class="loc-code">${place.code}</span>
+      <span class="loc-name">${place.name || '未命名'}</span>
+    `;
+    container.appendChild(btn);
   });
-
-  settings.locations   = locationSettings;
-  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value.trim();
-  settings.larkAppToken = document.getElementById('lark-app-token').value.trim();
-  settings.larkTableId  = document.getElementById('lark-table-id').value.trim();
-
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  renderLocationGrids();
-  renderAnnounceLocations();
-  showToast('✅ 設定已儲存');
 }
 
-function resetToDefaults() {
-  if (!confirm('確定恢復預設地點？自訂的設定會被覆蓋。')) return;
-  settings.locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
-  locationSettings   = settings.locations;
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  renderLocationSettings();
-  renderLocationGrids();
-  renderAnnounceLocations();
-  showToast('✅ 已恢復預設');
+function selectLocation(key, code) {
+  if (key === 'd1') selectedD1 = code;
+  else selectedD2 = code;
+  renderBtnsForDate('d1', 'd1LocationBtns');
+  renderBtnsForDate('d2', 'd2LocationBtns');
+  document.getElementById('errD1Loc').classList.remove('show');
+  document.getElementById('errD2Loc').classList.remove('show');
 }
 
-function saveSettings() {
-  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value.trim();
-  settings.larkAppToken = document.getElementById('lark-app-token').value.trim();
-  settings.larkTableId  = document.getElementById('lark-table-id').value.trim();
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+function renderAnnounceLocs() {
+  const l1 = (locations.d1 || []).map(p => p.code).join(' ｜ ') || '園1 ｜ 賣2 ｜ 聯1';
+  const l2 = (locations.d2 || []).map(p => p.code).join(' ｜ ') || '掃1 ｜ 精2 ｜ 園2';
+  document.getElementById('announceLocs1').textContent = l1;
+  document.getElementById('announceLocs2').textContent = l2;
 }
 
-/* ============================================
-   Participants
-============================================ */
-function addParticipant(key) {
-  const input = document.getElementById(`input-${key}`);
-  const name  = input.value.trim();
-  if (!name) return;
-
-  const list = key === '63' ? participants63 : participants610;
-  if (!list.includes(name)) list.push(name);
-
-  renderParticipants(key, list);
-  input.value = '';
-  input.focus();
+/* ============================================================
+   ROSTER (form-level)
+   ============================================================ */
+function getGroupRoster() {
+  const g = document.getElementById('groupNum').value;
+  if (!g || !STUDENT_ROSTER[g]) return [];
+  const savedRoster = getSavedRoster();
+  return STUDENT_ROSTER[g] || [];
 }
 
-function removeParticipant(key, name) {
-  const list = key === '63' ? participants63 : participants610;
-  const idx  = list.indexOf(name);
-  if (idx > -1) list.splice(idx, 1);
-  renderParticipants(key, list);
+function getSavedRoster() {
+  try {
+    const r = localStorage.getItem(ROSTER_KEY);
+    if (r) return JSON.parse(r);
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(STUDENT_ROSTER));
 }
 
-function renderParticipants(key, list) {
-  const container = document.getElementById(`participants-${key}`);
-  if (list.length === 0) {
-    container.innerHTML = '<div class="empty-participants">尚無參與人員，請新增</div>';
-    return;
-  }
-  container.innerHTML = list.map(name => `
-    <div class="participant-item">
-      <span>${escHtml(name)}</span>
-      <button type="button" class="del-btn" onclick="removeParticipant('${key}','${escHtml(name)}')">×</button>
-    </div>
-  `).join('');
+function onGroupChange() {
+  const g = document.getElementById('groupNum').value;
+  renderRosterGrid('d1', g);
+  renderRosterGrid('d2', g);
+  // Load existing data if any
+  loadGroupData();
 }
 
-/* ============================================
-   Load existing group data (for edit)
-============================================ */
-function loadGroupData() {
-  const group = document.getElementById('group').value;
-  if (!group || !reportData[group]) {
-    document.getElementById('leader-name').value = '';
-    document.getElementById('contact').value     = '';
-    resetFormToggles('63');
-    resetFormToggles('610');
-    participants63  = [];
-    participants610 = [];
-    selectedLoc63   = '';
-    selectedLoc610  = '';
-    renderParticipants('63',  []);
-    renderParticipants('610', []);
-    document.getElementById('note-general').value = '';
+function renderRosterGrid(key, group) {
+  const grid = document.getElementById(key + 'RosterGrid');
+  const label = document.getElementById(key + 'RosterLabel');
+  const actions = document.getElementById(key + 'RosterActions');
+  const count = document.getElementById(key + 'RosterCount');
+
+  if (!group) {
+    grid.innerHTML = '<div style="padding:12px; color:var(--text-light); font-size:0.85rem;">請先選擇組別</div>';
+    label.textContent = '請先選擇組別';
+    actions.style.display = 'none';
+    count.textContent = '';
     return;
   }
 
-  const d = reportData[group];
-  document.getElementById('leader-name').value = d.leaderName || '';
-  document.getElementById('contact').value     = d.contact     || '';
+  const roster = STUDENT_ROSTER[group] || [];
+  const saved = getSavedRoster()[group] || [];
+  label.textContent = `第${group}組學員（${roster.length}人）`;
+  actions.style.display = 'flex';
 
-  // 6/3
-  loadRound('63', d.j63);
-  // 6/10
-  loadRound('610', d.j610);
-
-  document.getElementById('note-general').value = d.noteGeneral || '';
+  grid.innerHTML = '';
+  roster.forEach(name => {
+    const checked = (key === 'd1' ? d1CheckedMembers : d2CheckedMembers).includes(name);
+    const item = document.createElement('label');
+    item.className = 'roster-item' + (checked ? ' checked' : '');
+    item.innerHTML = `
+      <input type="checkbox" value="${name}" ${checked ? 'checked' : ''}
+        onchange="toggleMember('${key}', '${name.replace(/'/g,"\\'")}')">
+      <span class="member-name">${name}</span>
+    `;
+    grid.appendChild(item);
+  });
+  updateSelectedCount(key, group);
 }
 
-function loadRound(key, data) {
-  const val = data.participate || '';
-  resetFormToggles(key);
-  if (val) {
-    const btn = document.querySelector(`#toggle-${key} .toggle-btn${val === '是' ? '' : '.no'}`);
-    if (btn) setToggle(key, val, btn);
-  }
-  if (val === '是') {
-    // Select location button
-    selectedLoc63 = key === '63' ? data.location : selectedLoc63;
-    selectedLoc610 = key === '610' ? data.location : selectedLoc610;
-    const locCode = data.location;
-    const grid = document.getElementById(`loc-grid-${key}`);
-    grid.querySelectorAll('.loc-btn').forEach(b => {
-      b.classList.toggle('selected', b.dataset.code === locCode);
-    });
-    document.getElementById(`meet${key}`).value = data.meetPoint || '';
-    const list = key === '63' ? participants63 : participants610;
-    list.length = 0;
-    list.push(...(data.participants || []));
-    renderParticipants(key, list);
-    document.getElementById(`note${key}`).value = data.note || '';
-  }
+function toggleMember(key, name) {
+  let arr = key === 'd1' ? d1CheckedMembers : d2CheckedMembers;
+  const idx = arr.indexOf(name);
+  if (idx >= 0) arr.splice(idx, 1);
+  else arr.push(name);
+  if (key === 'd1') d1CheckedMembers = arr;
+  else d2CheckedMembers = arr;
+  renderRosterGrid(key, document.getElementById('groupNum').value);
 }
 
-function resetFormToggles(key) {
-  const group = document.getElementById(`toggle-${key}`);
-  if (group) group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById(`j${key}-yes`).checked = false;
-  document.getElementById(`j${key}-no`).checked  = false;
-  document.getElementById(`details-${key}`).classList.add('hidden');
+function selectAll(key) {
+  const group = document.getElementById('groupNum').value;
+  if (!group) return;
+  const roster = STUDENT_ROSTER[group] || [];
+  if (key === 'd1') d1CheckedMembers = [...roster];
+  else d2CheckedMembers = [...roster];
+  renderRosterGrid(key, group);
 }
 
-/* ============================================
-   Submit
-============================================ */
-function handleSubmit(e) {
-  e.preventDefault();
-
-  const group      = document.getElementById('group').value;
-  const leaderName = document.getElementById('leader-name').value.trim();
-  const contact    = document.getElementById('contact').value.trim();
-
-  if (!group)      { showAlert('form-alert', '❌ 請選擇組別', 'error'); return false; }
-  if (!leaderName) { showAlert('form-alert', '❌ 請填寫組學員長姓名', 'error'); return false; }
-
-  const j63Val  = document.querySelector('input[name="j63"]:checked')?.value;
-  const j610Val = document.querySelector('input[name="j610"]:checked')?.value;
-
-  if (!j63Val)  { showAlert('form-alert', '❌ 請選擇 6/3 是否參與', 'error'); return false; }
-  if (!j610Val) { showAlert('form-alert', '❌ 請選擇 6/10 是否參與', 'error'); return false; }
-
-  if (j63Val === '是') {
-    if (!selectedLoc63)     { showAlert('form-alert', '❌ 6/3 請選擇地點', 'error'); return false; }
-    if (participants63.length === 0) { showAlert('form-alert', '❌ 6/3 請至少新增一位參與人員', 'error'); return false; }
-  }
-  if (j610Val === '是') {
-    if (!selectedLoc610)     { showAlert('form-alert', '❌ 6/10 請選擇地點', 'error'); return false; }
-    if (participants610.length === 0) { showAlert('form-alert', '❌ 6/10 請至少新增一位參與人員', 'error'); return false; }
-  }
-
-  // Build confirm content
-  let html = `<strong style="font-size:1.1rem;">第${group}組｜${escHtml(leaderName)}</strong><br><br>`;
-  html += `<strong>6/3</strong>：${j63Val === '是'
-    ? `✅ 參與｜${selectedLoc63}｜${participants63.length}人<br>　${participants63.join('、')}`
-    : '❌ 不參與'}`;
-  html += `<br><br><strong>6/10</strong>：${j610Val === '是'
-    ? `✅ 參與｜${selectedLoc610}｜${participants610.length}人<br>　${participants610.join('、')}`
-    : '❌ 不參與'}`;
-
-  document.getElementById('confirm-content').innerHTML = html;
-  document.getElementById('confirm-modal').classList.add('show');
-  return false;
+function clearAll(key) {
+  if (key === 'd1') d1CheckedMembers = [];
+  else d2CheckedMembers = [];
+  renderRosterGrid(key, document.getElementById('groupNum').value);
 }
 
-async function confirmSubmit() {
-  closeModal();
+function updateSelectedCount(key, group) {
+  const arr = key === 'd1' ? d1CheckedMembers : d2CheckedMembers;
+  const extra = (key === 'd1' ? 'd1Extra' : 'd2Extra').value.trim();
+  const extraCount = extra ? extra.split('\n').filter(l => l.trim()).length : 0;
+  const total = arr.length + extraCount;
+  const count = document.getElementById(key + 'RosterCount');
+  count.textContent = `已選：${arr.length}人${extraCount ? ` + 其他${extraCount}人` : ''} (共${total}人)`;
+  document.getElementById(key === 'd1' ? 'errD1Members' : 'errD2Members').classList.remove('show');
+}
 
-  const group      = document.getElementById('group').value;
-  const leaderName = document.getElementById('leader-name').value.trim();
-  const contact    = document.getElementById('contact').value.trim();
-  const j63Val     = document.querySelector('input[name="j63"]:checked')?.value;
-  const j610Val    = document.querySelector('input[name="j610"]:checked')?.value;
+/* ============================================================
+   FORM FIELDS TOGGLE
+   ============================================================ */
+function setD1Active(val) {
+  d1Active = val;
+  document.getElementById('d1ActiveYes').classList.toggle('active', val);
+  document.getElementById('d1ActiveNo').classList.toggle('active', !val);
+  document.getElementById('d1Fields').style.display = val ? 'block' : 'none';
+}
 
-  const record = {
-    group,
-    leaderName,
-    contact,
-    j63: {
-      participate:   j63Val,
-      location:      j63Val === '是' ? selectedLoc63 : '',
-      meetPoint:     j63Val === '是' ? document.getElementById('meet63').value.trim() : '',
-      participants:  j63Val === '是' ? [...participants63] : [],
-      note:          j63Val === '是' ? document.getElementById('note63').value.trim() : '',
-    },
-    j610: {
-      participate:   j610Val,
-      location:      j610Val === '是' ? selectedLoc610 : '',
-      meetPoint:     j610Val === '是' ? document.getElementById('meet610').value.trim() : '',
-      participants:  j610Val === '是' ? [...participants610] : [],
-      note:          j610Val === '是' ? document.getElementById('note610').value.trim() : '',
-    },
-    noteGeneral: document.getElementById('note-general').value.trim(),
-    updatedAt: new Date().toISOString(),
+function setD2Active(val) {
+  d2Active = val;
+  document.getElementById('d2ActiveYes').classList.toggle('active', val);
+  document.getElementById('d2ActiveNo').classList.toggle('active', !val);
+  document.getElementById('d2Fields').style.display = val ? 'block' : 'none';
+}
+
+/* ============================================================
+   SAVE / LOAD GROUP DATA
+   ============================================================ */
+function saveGroupData() {
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const g = document.getElementById('groupNum').value;
+  if (!g) return;
+
+  const extra1 = document.getElementById('d1Extra').value.trim();
+  const extra2 = document.getElementById('d2Extra').value.trim();
+
+  all[g] = {
+    leaderName: document.getElementById('leaderName').value.trim(),
+    contact: document.getElementById('contact').value.trim(),
+    d1: d1Active ? {
+      active: true,
+      location: selectedD1,
+      meet: document.getElementById('d1Meet').value.trim(),
+      members: [...d1CheckedMembers],
+      extraMembers: extra1 ? extra1.split('\n').map(l => l.trim()).filter(l => l) : [],
+      note: document.getElementById('d1Note').value.trim()
+    } : { active: false, location: '', meet: '', members: [], extraMembers: [], note: '' },
+    d2: d2Active ? {
+      active: true,
+      location: selectedD2,
+      meet: document.getElementById('d2Meet').value.trim(),
+      members: [...d2CheckedMembers],
+      extraMembers: extra2 ? extra2.split('\n').map(l => l.trim()).filter(l => l) : [],
+      note: document.getElementById('d2Note').value.trim()
+    } : { active: false, location: '', meet: '', members: [], extraMembers: [], note: '' },
+    timestamp: new Date().toISOString()
   };
 
-  // Save to localStorage (overwrite same group)
-  reportData[group] = record;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(reportData));
-
-  // Try Lark sync
-  let larkOk = false;
-  if (settings.cfWorkerUrl) {
-    larkOk = await syncToLark(record);
-  }
-
-  showAlert('form-alert',
-    larkOk ? '✅ 已回報，資料同步到 Lark Base' : '✅ 已回報（已存本機）',
-    'success');
-
-  // Reset form
-  document.getElementById('report-form').reset();
-  participants63  = [];
-  participants610 = [];
-  selectedLoc63   = '';
-  selectedLoc610  = '';
-  renderParticipants('63',  []);
-  renderParticipants('610', []);
-  resetFormToggles('63');
-  resetFormToggles('610');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
 }
 
-/* ============================================
-   Lark Sync
-============================================ */
-async function syncToLark(record) {
-  try {
-    const resp = await fetch(settings.cfWorkerUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        appToken: settings.larkAppToken,
-        tableId:  settings.larkTableId,
-        record: {
-          '組別':         record.group,
-          '組學員長':     record.leaderName,
-          '聯絡方式':     record.contact,
-          '6/3參與':      record.j63.participate,
-          '6/3地點':      record.j63.location,
-          '6/3集合地點':  record.j63.meetPoint,
-          '6/3參與人員':  record.j63.participants.join('\n'),
-          '6/10參與':     record.j610.participate,
-          '6/10地點':     record.j610.location,
-          '6/10集合地點': record.j610.meetPoint,
-          '6/10參與人員': record.j610.participants.join('\n'),
-          '備註':         record.noteGeneral,
-          '回報時間':     new Date().toLocaleString('zh-TW'),
-        }
-      })
-    });
-    return resp.ok;
-  } catch (e) {
-    console.error('Lark sync error:', e);
-    return false;
-  }
-}
+function loadGroupData() {
+  const g = document.getElementById('groupNum').value;
+  if (!g) return;
 
-/* ============================================
-   Stats
-============================================ */
-function refreshStats() {
-  const groups = Object.keys(reportData);
-  document.getElementById('stat-reported').textContent = groups.length;
-
-  const reported = new Set(groups);
-  const allGroups = ['1','2','3','4','5','6','7','8','9'];
-  const pending   = allGroups.filter(g => !reported.has(g));
-
-  document.getElementById('pending-groups').innerHTML = pending.length > 0
-    ? pending.map(g => `<span class="pending-tag">第${g}組</span>`).join('')
-    : '<span class="all-done-tag">✨ 所有組別都已回報！</span>';
-
-  let total63 = 0, total610 = 0;
-  const locStats63  = {};
-  const locStats610 = {};
-
-  allGroups.forEach(g => {
-    const d = reportData[g];
-    if (!d) return;
-    if (d.j63.participate === '是') {
-      total63 += d.j63.participants.length;
-      const loc = d.j63.location;
-      if (!locStats63[loc]) locStats63[loc] = { groups: [], count: 0, meet: '' };
-      locStats63[loc].groups.push(g);
-      locStats63[loc].count += d.j63.participants.length;
-      if (d.j63.meetPoint) locStats63[loc].meet = d.j63.meetPoint;
-    }
-    if (d.j610.participate === '是') {
-      total610 += d.j610.participants.length;
-      const loc = d.j610.location;
-      if (!locStats610[loc]) locStats610[loc] = { groups: [], count: 0, meet: '' };
-      locStats610[loc].groups.push(g);
-      locStats610[loc].count += d.j610.participants.length;
-      if (d.j610.meetPoint) locStats610[loc].meet = d.j610.meetPoint;
-    }
-  });
-
-  document.getElementById('stat-63').textContent  = total63;
-  document.getElementById('stat-610').textContent = total610;
-
-  renderLocationStats('63',  locStats63);
-  renderLocationStats('610', locStats610);
-  renderGroupCards();
-}
-
-function renderLocationStats(key, stats) {
-  const container = document.getElementById(`stats-${key}-locations`);
-  const locs = locationSettings[key];
-
-  if (!locs || locs.length === 0) {
-    container.innerHTML = '<div style="font-size:0.95rem;color:var(--text-light);">尚無地點資料</div>';
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const data = all[g];
+  if (!data) {
+    d1CheckedMembers = [];
+    d2CheckedMembers = [];
     return;
   }
 
-  container.innerHTML = locs.map(loc => {
-    const s      = stats[loc.code] || { groups: [], count: 0 };
-    const groups = s.groups.length > 0
-      ? s.groups.map(g => {
-          const d = reportData[g];
-          const names = d && d[`j${key}`].participants.join('、');
-          return `<div class="loc-stat-row"><span class="grp">第${g}組</span><span class="names">${names}</span></div>`;
-        }).join('')
-      : '<div class="loc-stat-row"><span class="names" style="color:var(--text-light);">尚無參與</span></div>';
-    const meet = loc.meet ? `<div class="loc-stat-meet">📍 集合：${loc.meet}</div>` : '';
-    return `
-      <div class="loc-stat-card">
-        <div class="loc-stat-header">
-          ${loc.code}｜${loc.name}
-          <span class="count-badge">${s.count}人</span>
-        </div>
-        ${groups}
-        ${meet}
-      </div>
-    `;
-  }).join('');
-}
+  document.getElementById('leaderName').value = data.leaderName || '';
+  document.getElementById('contact').value = data.contact || '';
 
-function renderGroupCards() {
-  const container = document.getElementById('group-cards');
-  const allGroups = ['1','2','3','4','5','6','7','8','9'];
-
-  container.innerHTML = allGroups.map(g => {
-    const d = reportData[g];
-    if (!d) {
-      return `
-        <div class="group-card no-report">
-          <div class="group-card-header">第${g}組</div>
-          <div style="font-size:0.95rem;color:var(--text-light);">（尚未回報）</div>
-        </div>`;
+  if (data.d1) {
+    setD1Active(data.d1.active !== false);
+    if (data.d1.active) {
+      selectLocation('d1', data.d1.location || '');
+      document.getElementById('d1Meet').value = data.d1.meet || '';
+      d1CheckedMembers = data.d1.members ? [...data.d1.members] : [];
+      document.getElementById('d1Extra').value = (data.d1.extraMembers || []).join('\n');
+      document.getElementById('d1Note').value = data.d1.note || '';
     }
-    const day63  = d.j63.participate === '是'
-      ? `<div class="group-card-row"><span class="label">6/3</span><span class="val active">${d.j63.location}｜${d.j63.participants.length}人</span></div>
-         <div class="group-card-row"><span class="label">人員</span><span class="val">${d.j63.participants.join('、')}</span></div>`
-      : `<div class="group-card-row"><span class="label">6/3</span><span class="val">❌ 不參與</span></div>`;
-    const day610 = d.j610.participate === '是'
-      ? `<div class="group-card-row"><span class="label">6/10</span><span class="val active">${d.j610.location}｜${d.j610.participants.length}人</span></div>
-         <div class="group-card-row"><span class="label">人員</span><span class="val">${d.j610.participants.join('、')}</span></div>`
-      : `<div class="group-card-row"><span class="label">6/10</span><span class="val">❌ 不參與</span></div>`;
-    const note   = d.noteGeneral ? `<div class="group-card-row"><span class="label">備註</span><span class="val">${escHtml(d.noteGeneral)}</span></div>` : '';
-    return `
-      <div class="group-card">
-        <div class="group-card-header">第${g}組｜${escHtml(d.leaderName)}</div>
-        ${day63}
-        ${day610}
-        ${note}
-      </div>
-    `;
-  }).join('');
+  }
+
+  if (data.d2) {
+    setD2Active(data.d2.active !== false);
+    if (data.d2.active) {
+      selectLocation('d2', data.d2.location || '');
+      document.getElementById('d2Meet').value = data.d2.meet || '';
+      d2CheckedMembers = data.d2.members ? [...data.d2.members] : [];
+      document.getElementById('d2Extra').value = (data.d2.extraMembers || []).join('\n');
+      document.getElementById('d2Note').value = data.d2.note || '';
+    }
+  }
+
+  renderRosterGrid('d1', g);
+  renderRosterGrid('d2', g);
 }
 
-/* ============================================
-   Export
-============================================ */
-function exportCSV() {
-  const allGroups = ['1','2','3','4','5','6','7','8','9'];
-  const header = ['組別','組學員長','聯絡方式','6/3參與','6/3地點','6/3集合地點','6/3人數','6/3人員','6/10參與','6/10地點','6/10集合地點','6/10人數','6/10人員','備註'];
-  const rows = [header];
+/* ============================================================
+   VALIDATION
+   ============================================================ */
+function validate() {
+  let ok = true;
+  const g = document.getElementById('groupNum').value;
+  const name = document.getElementById('leaderName').value.trim();
 
-  allGroups.forEach(g => {
-    const d = reportData[g];
-    if (!d) {
-      rows.push([g,'','','','','','','','','','','','','']);
+  if (!g) { document.getElementById('errGroup').classList.add('show'); ok = false; }
+  else document.getElementById('errGroup').classList.remove('show');
+
+  if (!name) { document.getElementById('errName').classList.add('show'); ok = false; }
+  else document.getElementById('errName').classList.remove('show');
+
+  // 6/3 validation
+  if (d1Active) {
+    if (!selectedD1) { document.getElementById('errD1Loc').classList.add('show'); ok = false; }
+    else document.getElementById('errD1Loc').classList.remove('show');
+    const extra1 = document.getElementById('d1Extra').value.trim();
+    const extraCount1 = extra1 ? extra1.split('\n').filter(l => l.trim()).length : 0;
+    if (d1CheckedMembers.length + extraCount1 === 0) {
+      document.getElementById('errD1Members').classList.add('show'); ok = false;
     } else {
-      rows.push([
-        g, d.leaderName, d.contact,
-        d.j63.participate, d.j63.location, d.j63.meetPoint,
-        d.j63.participate === '是' ? d.j63.participants.length : 0,
-        d.j63.participate === '是' ? d.j63.participants.join('、') : '',
-        d.j610.participate, d.j610.location, d.j610.meetPoint,
-        d.j610.participate === '是' ? d.j610.participants.length : 0,
-        d.j610.participate === '是' ? d.j610.participants.join('、') : '',
-        d.noteGeneral,
-      ]);
+      document.getElementById('errD1Members').classList.remove('show');
+    }
+  }
+
+  // 6/10 validation
+  if (d2Active) {
+    if (!selectedD2) { document.getElementById('errD2Loc').classList.add('show'); ok = false; }
+    else document.getElementById('errD2Loc').classList.remove('show');
+    const extra2 = document.getElementById('d2Extra').value.trim();
+    const extraCount2 = extra2 ? extra2.split('\n').filter(l => l.trim()).length : 0;
+    if (d2CheckedMembers.length + extraCount2 === 0) {
+      document.getElementById('errD2Members').classList.add('show'); ok = false;
+    } else {
+      document.getElementById('errD2Members').classList.remove('show');
+    }
+  }
+
+  return ok;
+}
+
+/* ============================================================
+   CONFIRM DIALOG
+   ============================================================ */
+function showConfirm() {
+  if (!validate()) {
+    // Scroll to first error
+    const err = document.querySelector('.form-error.show');
+    if (err) err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const g = document.getElementById('groupNum').value;
+  const name = document.getElementById('leaderName').value.trim();
+  const contact = document.getElementById('contact').value.trim();
+
+  let html = '';
+  html += `<div class="confirm-row"><span class="label">組別</span><span class="value">第${g}組</span></div>`;
+  html += `<div class="confirm-row"><span class="label">組學員長</span><span class="value">${name}</span></div>`;
+  if (contact) html += `<div class="confirm-row"><span class="label">聯絡方式</span><span class="value">${contact}</span></div>`;
+
+  html += `<div class="confirm-divider"></div>`;
+
+  if (d1Active) {
+    const extra1 = document.getElementById('d1Extra').value.trim();
+    const extraNames1 = extra1 ? extra1.split('\n').map(l => l.trim()).filter(l => l) : [];
+    const all1 = [...d1CheckedMembers, ...extraNames1];
+    html += `<div class="confirm-row"><span class="label">6/3</span><span class="value">✅ 參與</span></div>`;
+    html += `<div class="confirm-row"><span class="label">6/3 地點</span><span class="value">${selectedD1}</span></div>`;
+    html += `<div class="confirm-row"><span class="label">6/3 集合</span><span class="value">${document.getElementById('d1Meet').value.trim() || '（未填）'}</span></div>`;
+    html += `<div class="confirm-row"><span class="label">6/3 人員（${all1.length}人）</span><span class="value">${all1.join('、') || '（未填）'}</span></div>`;
+    const note1 = document.getElementById('d1Note').value.trim();
+    if (note1) html += `<div class="confirm-row"><span class="label">6/3 備註</span><span class="value">${note1}</span></div>`;
+  } else {
+    html += `<div class="confirm-row"><span class="label">6/3</span><span class="value">❌ 不參與</span></div>`;
+  }
+
+  html += `<div class="confirm-divider"></div>`;
+
+  if (d2Active) {
+    const extra2 = document.getElementById('d2Extra').value.trim();
+    const extraNames2 = extra2 ? extra2.split('\n').map(l => l.trim()).filter(l => l) : [];
+    const all2 = [...d2CheckedMembers, ...extraNames2];
+    html += `<div class="confirm-row"><span class="label">6/10</span><span class="value">✅ 參與</span></div>`;
+    html += `<div class="confirm-row"><span class="label">6/10 地點</span><span class="value">${selectedD2}</span></div>`;
+    html += `<div class="confirm-row"><span class="label">6/10 集合</span><span class="value">${document.getElementById('d2Meet').value.trim() || '（未填）'}</span></div>`;
+    html += `<div class="confirm-row"><span class="label">6/10 人員（${all2.length}人）</span><span class="value">${all2.join('、') || '（未填）'}</span></div>`;
+    const note2 = document.getElementById('d2Note').value.trim();
+    if (note2) html += `<div class="confirm-row"><span class="label">6/10 備註</span><span class="value">${note2}</span></div>`;
+  } else {
+    html += `<div class="confirm-row"><span class="label">6/10</span><span class="value">❌ 不參與</span></div>`;
+  }
+
+  document.getElementById('confirmContent').innerHTML = html;
+  document.getElementById('confirmDialog').classList.add('show');
+}
+
+function closeConfirm() {
+  document.getElementById('confirmDialog').classList.remove('show');
+}
+
+function submitForm() {
+  saveGroupData();
+  closeConfirm();
+  renderStats();
+  toast('✅ 已完成回報，感恩發心！');
+}
+
+/* ============================================================
+   STATS
+   ============================================================ */
+function renderStats() {
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const total = 9;
+  const reported = Object.keys(all).filter(g => all[g] && (all[g].d1?.active || all[g].d2?.active || all[g].d1 || all[g].d2)).length;
+  const notReported = [];
+  for (let i = 1; i <= 9; i++) {
+    const g = String(i);
+    if (!all[g] || (!all[g].d1?.active && !all[g].d2?.active)) {
+      notReported.push('第' + g + '組');
+    }
+  }
+
+  let d1Total = 0, d2Total = 0;
+  const d1Locs = {}, d2Locs = {};
+
+  Object.keys(all).forEach(g => {
+    const d = all[g];
+    if (d.d1 && d.d1.active) {
+      const loc = d.d1.location;
+      const members = (d.d1.members || []).concat(d.d1.extraMembers || []);
+      d1Total += members.length;
+      if (!d1Locs[loc]) d1Locs[loc] = { groups: [], members: [] };
+      d1Locs[loc].groups.push('第' + g + '組');
+      d1Locs[loc].members.push(...members);
+    }
+    if (d.d2 && d.d2.active) {
+      const loc = d.d2.location;
+      const members = (d.d2.members || []).concat(d.d2.extraMembers || []);
+      d2Total += members.length;
+      if (!d2Locs[loc]) d2Locs[loc] = { groups: [], members: [] };
+      d2Locs[loc].groups.push('第' + g + '組');
+      d2Locs[loc].members.push(...members);
     }
   });
 
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-  downloadFile(csv, 'dm-report.csv', 'text/csv');
-  showToast('✅ CSV 已下載');
+  // Summary cards
+  document.getElementById('statsSummary').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-number">${reported}/${total}</div>
+      <div class="stat-label">已回報組數</div>
+    </div>
+    <div class="stat-card highlight">
+      <div class="stat-number">${d1Total + d2Total}</div>
+      <div class="stat-label">總參與人次</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">${d1Total}</div>
+      <div class="stat-label">6/3 總人數</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">${d2Total}</div>
+      <div class="stat-label">6/10 總人數</div>
+    </div>
+  `;
+
+  // Details
+  const places1 = locations.d1 || DEFAULT_LOCATIONS.d1;
+  const places2 = locations.d2 || DEFAULT_LOCATIONS.d2;
+
+  let details = '';
+
+  // 6/3 location stats
+  details += `
+  <div class="stats-section">
+    <div class="stats-section-title">6/3（三）各地點人數</div>
+    ${places1.map(p => {
+      const stat = d1Locs[p.code];
+      if (!stat) return `<div class="location-stat"><span class="loc-stat-code">${p.code}</span><span class="loc-stat-empty">尚無回報</span></div>`;
+      return `<div class="location-stat">
+        <span class="loc-stat-code">${p.code}</span>
+        <div class="loc-stat-info">
+          <div class="loc-stat-count">${stat.members.length} 人</div>
+          <div class="loc-stat-groups">${stat.groups.join('、')}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  // 6/10 location stats
+  details += `
+  <div class="stats-section">
+    <div class="stats-section-title">6/10（三）各地點人數</div>
+    ${places2.map(p => {
+      const stat = d2Locs[p.code];
+      if (!stat) return `<div class="location-stat"><span class="loc-stat-code">${p.code}</span><span class="loc-stat-empty">尚無回報</span></div>`;
+      return `<div class="location-stat">
+        <span class="loc-stat-code">${p.code}</span>
+        <div class="loc-stat-info">
+          <div class="loc-stat-count">${stat.members.length} 人</div>
+          <div class="loc-stat-groups">${stat.groups.join('、')}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+
+  // Group detail table
+  details += `
+  <div class="stats-section">
+    <div class="stats-section-title">各組回報明細</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>組</th><th>學員長</th>
+            <th>6/3地點</th><th>6/3人數</th><th>6/3人員</th>
+            <th>6/10地點</th><th>6/10人數</th><th>6/10人員</th>
+            <th>備註</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${Array.from({length:9}, (_, i) => {
+            const g = String(i+1);
+            const d = all[g];
+            if (!d) return `<tr class="no-data"><td>${g}</td><td colspan="8">尚未回報</td></tr>`;
+            const d1m = (d.d1?.members||[]).concat(d.d1?.extraMembers||[]);
+            const d2m = (d.d2?.members||[]).concat(d.d2?.extraMembers||[]);
+            return `<tr>
+              <td>${g}</td>
+              <td>${d.leaderName||''}</td>
+              <td>${d.d1?.active ? (d.d1.location||'') : '❌'}</td>
+              <td>${d.d1?.active ? d1m.length : '-'}</td>
+              <td>${d.d1?.active ? d1m.slice(0,5).join('、') + (d1m.length>5?'…':'') : '-'}</td>
+              <td>${d.d2?.active ? (d.d2.location||'') : '❌'}</td>
+              <td>${d.d2?.active ? d2m.length : '-'}</td>
+              <td>${d.d2?.active ? d2m.slice(0,5).join('、') + (d2m.length>5?'…':'') : '-'}</td>
+              <td>${[(d.d1?.note||''), (d.d2?.note||'')].filter(Boolean).join(' / ')}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+
+  if (notReported.length > 0) {
+    details += `<div class="card" style="border-color:var(--danger);">
+      <div style="font-size:0.9rem; font-weight:700; color:var(--danger); margin-bottom:6px;">⚠️ 尚未回報組別</div>
+      <div style="font-size:0.88rem;">${notReported.join('、')}</div>
+    </div>`;
+  }
+
+  document.getElementById('statsDetails').innerHTML = details;
+}
+
+/* ============================================================
+   EXPORTS
+   ============================================================ */
+function exportCSV() {
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const headers = ['組別','組學員長','聯絡方式','6/3參與','6/3地點','6/3集合','6/3人數','6/3人員','6/3備註','6/10參與','6/10地點','6/10集合','6/10人數','6/10人員','6/10備註','回報時間'];
+  const rows = [headers.join(',')];
+  for (let g = 1; g <= 9; g++) {
+    const d = all[String(g)];
+    if (!d) {
+      rows.push([g,'','','','','','','','','','','','','','',''].join(','));
+      continue;
+    }
+    const d1m = (d.d1?.members||[]).concat(d.d1?.extraMembers||[]);
+    const d2m = (d.d2?.members||[]).concat(d.d2?.extraMembers||[]);
+    rows.push([
+      g,
+      d.leaderName||'',
+      d.contact||'',
+      d.d1?.active ? '是':'否',
+      d.d1?.active ? (d.d1.location||''):'',
+      d.d1?.active ? (d.d1.meet||''):'',
+      d.d1?.active ? d1m.length:'',
+      d.d1?.active ? d1m.join('；'):'',
+      d.d1?.note||'',
+      d.d2?.active ? '是':'否',
+      d.d2?.active ? (d.d2.location||''):'',
+      d.d2?.active ? (d.d2.meet||''):'',
+      d.d2?.active ? d2m.length:'',
+      d.d2?.active ? d2m.join('；'):'',
+      d.d2?.note||'',
+      d.timestamp||''
+    ].map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
+  }
+  downloadFile('dm_report.csv', rows.join('\n'), 'text/csv');
+  toast('📥 CSV 已下載');
 }
 
 function exportJSON() {
-  downloadFile(JSON.stringify(reportData, null, 2), 'dm-report.json', 'application/json');
-  showToast('✅ JSON 已下載');
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  downloadFile('dm_report.json', JSON.stringify(all, null, 2), 'application/json');
+  toast('📥 JSON 已下載');
 }
 
-function copyLineText() {
-  const allGroups = ['1','2','3','4','5','6','7','8','9'];
-  const reported  = new Set(Object.keys(reportData));
-  const pending   = allGroups.filter(g => !reported.has(g));
+function downloadFile(name, content, type) {
+  const blob = new Blob([content], { type });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
-  let total63 = 0, total610 = 0;
-  const locStats63  = {};
-  const locStats610 = {};
+/* ============================================================
+   LINE TEXT
+   ============================================================ */
+function getLineText() {
+  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  const places1 = locations.d1 || DEFAULT_LOCATIONS.d1;
+  const places2 = locations.d2 || DEFAULT_LOCATIONS.d2;
+  const d1Locs = {}, d2Locs = {};
+  let d1Total = 0, d2Total = 0;
 
-  allGroups.forEach(g => {
-    const d = reportData[g];
-    if (!d) return;
-    if (d.j63.participate === '是') {
-      total63 += d.j63.participants.length;
-      const loc = d.j63.location;
-      if (!locStats63[loc]) locStats63[loc] = [];
-      locStats63[loc].push({ group: g, names: d.j63.participants });
+  Object.keys(all).forEach(g => {
+    const d = all[g];
+    if (d.d1 && d.d1.active) {
+      const loc = d.d1.location;
+      const members = (d.d1.members||[]).concat(d.d1.extraMembers||[]);
+      d1Total += members.length;
+      if (!d1Locs[loc]) d1Locs[loc] = [];
+      d1Locs[loc].push({ group: '第'+g+'組', members });
     }
-    if (d.j610.participate === '是') {
-      total610 += d.j610.participants.length;
-      const loc = d.j610.location;
-      if (!locStats610[loc]) locStats610[loc] = [];
-      locStats610[loc].push({ group: g, names: d.j610.participants });
+    if (d.d2 && d.d2.active) {
+      const loc = d.d2.location;
+      const members = (d.d2.members||[]).concat(d.d2.extraMembers||[]);
+      d2Total += members.length;
+      if (!d2Locs[loc]) d2Locs[loc] = [];
+      d2Locs[loc].push({ group: '第'+g+'組', members });
     }
   });
 
-  function formatLoc(stats, locs) {
-    return locs.map(loc => {
-      const entries = stats[loc.code] || [];
-      if (entries.length === 0) return `${loc.code}：（無）`;
-      return `${loc.code}：\n` + entries.map(e => `第${e.group}組：${e.names.join('、')}，共${e.names.length}人`).join('\n');
-    }).join('\n\n');
+  const notReported = [];
+  for (let i = 1; i <= 9; i++) {
+    const g = String(i);
+    if (!all[g] || (!all[g].d1?.active && !all[g].d2?.active)) notReported.push('第'+g+'組');
   }
 
-  const pendingStr = pending.length > 0 ? `尚未回報組別：第${pending.join('組、第')}組` : '尚未回報組別：無';
+  let txt = '【第61期初級禪修班招生｜三晚初發DM回報統計】\n\n';
+  txt += '一、6/3（三）晚上8:00～9:00\n';
+  txt += `總人數：${d1Total}人\n\n`;
+  places1.forEach(p => {
+    const stat = d1Locs[p.code];
+    if (stat && stat.length > 0) {
+      txt += `${p.code}：\n`;
+      stat.forEach(s => {
+        txt += `${s.group}：${s.members.join('、')}，共${s.members.length}人\n`;
+      });
+    }
+  });
+  txt += '\n二、6/10（三）晚上8:00～9:00\n';
+  txt += `總人數：${d2Total}人\n\n`;
+  places2.forEach(p => {
+    const stat = d2Locs[p.code];
+    if (stat && stat.length > 0) {
+      txt += `${p.code}：\n`;
+      stat.forEach(s => {
+        txt += `${s.group}：${s.members.join('、')}，共${s.members.length}人\n`;
+      });
+    }
+  });
 
-  const text = `【第61期初級禪修班招生｜三晚初發DM回報統計】
+  if (notReported.length > 0) {
+    txt += `\n尚未回報組別：${notReported.join('、')}\n`;
+  }
 
-一、6/3（三）晚上8:00～9:00
-總人數：${total63}人
-
-${formatLoc(locStats63, locationSettings['63'])}
-
-二、6/10（三）晚上8:00～9:00
-總人數：${total610}人
-
-${formatLoc(locStats610, locationSettings['610'])}
-
-${pendingStr}
-
-感恩各組學員長協助統計，阿彌陀佛。`;
-
-  navigator.clipboard.writeText(text).then(() => showToast('✅ 已複製到剪貼簿'));
+  txt += '\n感恩各組學員長協助統計，阿彌陀佛。';
+  return txt;
 }
 
-function downloadFile(content, filename, type) {
-  const blob = new Blob([content], { type });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+function showLineText() {
+  const area = document.getElementById('lineCopyArea');
+  area.style.display = 'block';
+  area.textContent = getLineText();
 }
 
-/* ============================================
-   Copy announcement
-============================================ */
+function copyLineText() {
+  navigator.clipboard.writeText(getLineText()).then(() => toast('📋 LINE 文字已複製'));
+}
+
+/* ============================================================
+   ANNOUNCEMENT COPY
+   ============================================================ */
 function copyAnnouncement() {
-  const text = document.getElementById('announcement-text').textContent;
-  navigator.clipboard.writeText(text).then(() => showToast('✅ 公告文字已複製'));
+  const text = document.getElementById('announcementText').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('📋 公告文字已複製'));
 }
 
-/* ============================================
-   UI Helpers
-============================================ */
-function closeModal() {
-  document.getElementById('confirm-modal').classList.remove('show');
+/* ============================================================
+   ROSTER PANEL (Tab 4)
+   ============================================================ */
+function renderRosterPanel() {
+  const container = document.getElementById('rosterGroups');
+  container.innerHTML = '';
+  for (let g = 1; g <= 9; g++) {
+    const roster = STUDENT_ROSTER[String(g)] || [];
+    const card = document.createElement('div');
+    card.className = 'roster-group-card';
+    card.innerHTML = `
+      <div class="roster-group-header">
+        <span class="roster-group-title">第${g}組</span>
+        <span class="roster-group-count">${roster.length}人</span>
+      </div>
+      <div class="roster-member-list">
+        ${roster.map(n => `<span class="roster-member-tag">${n}</span>`).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  }
 }
 
-function showAlert(id, msg, type) {
-  const el = document.getElementById(id);
-  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-  setTimeout(() => { el.innerHTML = ''; }, 5000);
+function exportRosterJSON() {
+  const roster = getSavedRoster();
+  downloadFile('dm_roster.json', JSON.stringify(roster, null, 2), 'application/json');
+  toast('📥 名冊 JSON 已下載');
 }
 
-function showToast(msg) {
+function showRosterImport() {
+  const area = document.getElementById('rosterImportArea');
+  area.style.display = area.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('rosterImportText').value = '';
+}
+
+function importRosterJSON() {
+  try {
+    const text = document.getElementById('rosterImportText').value.trim();
+    const data = JSON.parse(text);
+    localStorage.setItem(ROSTER_KEY, JSON.stringify(data));
+    toast('✅ 名冊匯入成功');
+    showRosterImport();
+    renderRosterPanel();
+  } catch(e) {
+    toast('❌ JSON 格式錯誤');
+  }
+}
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+document.getElementById('tabNav').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel' + btn.dataset.tab).classList.add('active');
+  if (btn.dataset.tab === '2') renderStats();
+  if (btn === '3') renderLocationSettings();
+});
+
+/* ============================================================
+   EXTRA MEMBERS INPUT — live count update
+   ============================================================ */
+['d1Extra','d2Extra'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const key = id === 'd1Extra' ? 'd1' : 'd2';
+    updateSelectedCount(key, document.getElementById('groupNum').value);
+  });
+});
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
+/* ============================================================
+   START
+   ============================================================ */
+init();
 </script>
+
 </body>
 </html>
