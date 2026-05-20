@@ -1,0 +1,10 @@
+name = "lark-base-proxy"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+vars = { LARK_BASE_TOKEN = "UF7Mb2UYaa4r4Oss6ZJllugzgse", LARK_TABLE_ID = "tblyaZO8XTTwd7fV" }
+
+# 環境變數（實際 secret 不要寫在這，用 `wrangler secret put` 設定）
+# wrangler secret put LARK_APP_ID
+# wrangler secret put LARK_APP_SECRET

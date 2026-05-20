@@ -916,6 +916,48 @@ const LOC_KEY = 'dm_locations';
 const ROSTER_KEY = 'dm_student_roster';
 
 /* ============================================================
+   LARK SETTINGS
+   ============================================================ */
+// ⚙️ 請填入 Cloudflare Worker 的公開 URL（部署 Worker 後替換這行）
+const LARK_PROXY_URL = 'https://lark-base-proxy.your-subdomain.workers.dev';
+
+/* ============================================================
+   LARK API
+   ============================================================ */
+
+/**
+ * 呼叫 Lark Worker API（統一的 fetch wrapper）
+ */
+async function larkApi(action, body = {}) {
+  const resp = await fetch(LARK_PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, ...body })
+  });
+  if (!resp.ok) throw new Error('網路錯誤：' + resp.status);
+  const data = await resp.json();
+  if (!data.ok) throw new Error(data.error || 'Lark 回應錯誤');
+  return data;
+}
+
+/**
+ * 寫入或更新一筆回報到 Lark Base（upsert）
+ * @returns { ok: true, action: 'created'|'updated', group, recordId }
+ */
+async function syncReportToLark(group, report) {
+  return larkApi('upsertReport', { group, report });
+}
+
+/**
+ * 從 Lark Base 讀取所有回報
+ * @returns { Object } { group1: report1, group2: report2, ... }
+ */
+async function loadReportsFromLark() {
+  const data = await larkApi('listReports');
+  return data.reports || {};
+}
+
+/* ============================================================
    STATE
    ============================================================ */
 let locations = {};
@@ -925,6 +967,10 @@ let selectedD1 = null;
 let selectedD2 = null;
 let d1CheckedMembers = [];
 let d2CheckedMembers = [];
+// Lark 資料 cache（避免短時間重複讀取）
+let larkCache = null;
+let larkCacheTime = 0;
+const LARK_CACHE_TTL = 30000; // 30 秒 TTL
 
 /* ============================================================
    INIT
@@ -935,7 +981,7 @@ function init() {
   renderLocationCards();
   renderAnnounceLocs();
   renderRosterPanel();
-  renderStats();
+  renderStats(); // async, fire-and-forget
 }
 
 /* ============================================================
@@ -1351,27 +1397,106 @@ function closeConfirm() {
   document.getElementById('confirmDialog').classList.remove('show');
 }
 
-function submitForm() {
+async function submitForm() {
   const g = document.getElementById('groupNum').value;
-  saveGroupData();
+
+  // 組合 report 物件
+  const extra1 = document.getElementById('d1Extra').value.trim();
+  const extra2 = document.getElementById('d2Extra').value.trim();
+  const report = {
+    d1: d1Active ? {
+      active: true,
+      location: selectedD1,
+      locationName: getLocationName('d1', selectedD1),
+      meet: getLocationMeet('d1', selectedD1),
+      members: [...d1CheckedMembers],
+      extraMembers: extra1 ? extra1.split('\n').map(l => l.trim()).filter(l => l) : [],
+      note: document.getElementById('d1Note').value.trim()
+    } : { active: false, location: '', locationName: '', meet: '', members: [], extraMembers: [], note: '' },
+    d2: d2Active ? {
+      active: true,
+      location: selectedD2,
+      locationName: getLocationName('d2', selectedD2),
+      meet: getLocationMeet('d2', selectedD2),
+      members: [...d2CheckedMembers],
+      extraMembers: extra2 ? extra2.split('\n').map(l => l.trim()).filter(l => l) : [],
+      note: document.getElementById('d2Note').value.trim()
+    } : { active: false, location: '', locationName: '', meet: '', members: [], extraMembers: [], note: '' }
+  };
+
+  // 顯示「送出中」
   closeConfirm();
-  renderStats();
-  toast(`✅ 第${g}組回報完成，感恩發心！`);
+  toast('⏳ 正在寫入 Lark，請稍候...');
+
+  try {
+    // 寫入 Lark Base（自動 upsert）
+    await syncReportToLark(g, report);
+    // Lark 成功 → 同步 localStorage 草稿
+    saveGroupData();
+    larkCache = null; // 清除快取，下次 renderStats 會重新讀取
+    renderStats();
+    toast(`✅ 第${g}組回報完成，感恩發心！`);
+  } catch (err) {
+    console.error('Lark 寫入失敗:', err);
+    // Lark 失敗：仍然存草稿，但清楚告知
+    saveGroupData();
+    toast(`❌ 回報未完成：${err.message || '請稍後再試'}`, 4000);
+  }
+}
+
+function getLocationName(key, code) {
+  if (!code) return '';
+  const places = locations[key] || [];
+  const p = places.find(x => x.code === code);
+  return p ? p.name : '';
+}
+
+function getLocationMeet(key, code) {
+  if (!code) return '';
+  const places = locations[key] || [];
+  const p = places.find(x => x.code === code);
+  return p ? p.meet : '';
 }
 
 /* ============================================================
    STATS
    ============================================================ */
-function renderStats() {
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+async function renderStats() {
+  // 先顯示讀取中
+  document.getElementById('statsSummary').innerHTML = `
+    <div class="stat-card" style="grid-column:1/-1"><div style="padding:20px;text-align:center;color:var(--text-light);font-size:0.95rem;">⏳ 正在讀取 Lark 統計資料...</div></div>
+  `;
+  document.getElementById('statsDetails').innerHTML = '';
+
+  let larkData = null;
+  let usingLocal = false;
+
+  // 嘗試從 Lark 讀取
+  try {
+    // 使用快取（30秒內不重複讀取）
+    if (!larkCache || (Date.now() - larkCacheTime) > LARK_CACHE_TTL) {
+      larkData = await loadReportsFromLark();
+      larkCache = larkData;
+      larkCacheTime = Date.now();
+    } else {
+      larkData = larkCache;
+    }
+  } catch (err) {
+    console.warn('Lark 讀取失敗，降級到 localStorage:', err);
+    usingLocal = true;
+    larkData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  }
+
+  const all = larkData; // 可能是 Lark data 或 localStorage fallback
   const total = 9;
-  const reported = Object.keys(all).filter(g => all[g] && (all[g].d1?.active || all[g].d2?.active)).length;
+
+  // 已回報 = Lark 有該組記錄（不論 d1/d2 是否參與）
+  const reported = Object.keys(all).filter(g => !!all[g]).length;
   const notReported = [];
   for (let i = 1; i <= 9; i++) {
     const g = String(i);
-    if (!all[g] || (!all[g].d1?.active && !all[g].d2?.active)) {
-      notReported.push('第' + g + '組');
-    }
+    if (!all[g]) notReported.push('第' + g + '組');
   }
 
   let d1Total = 0, d2Total = 0;
@@ -1379,17 +1504,20 @@ function renderStats() {
 
   Object.keys(all).forEach(g => {
     const d = all[g];
-    if (d.d1 && d.d1.active) {
-      const loc = d.d1.location;
-      const members = (d.d1.members || []).concat(d.d1.extraMembers || []);
+    if (!d) return;
+    const d1 = d.d1 || {};
+    const d2 = d.d2 || {};
+    if (d1.active) {
+      const loc = d1.location || '';
+      const members = (d1.members||[]).concat(d1.extraMembers||[]);
       d1Total += members.length;
       if (!d1Locs[loc]) d1Locs[loc] = { groups: [], members: [] };
       d1Locs[loc].groups.push('第' + g + '組');
       d1Locs[loc].members.push(...members);
     }
-    if (d.d2 && d.d2.active) {
-      const loc = d.d2.location;
-      const members = (d.d2.members || []).concat(d.d2.extraMembers || []);
+    if (d2.active) {
+      const loc = d2.location || '';
+      const members = (d2.members||[]).concat(d2.extraMembers||[]);
       d2Total += members.length;
       if (!d2Locs[loc]) d2Locs[loc] = { groups: [], members: [] };
       d2Locs[loc].groups.push('第' + g + '組');
@@ -1398,6 +1526,7 @@ function renderStats() {
   });
 
   document.getElementById('statsSummary').innerHTML = `
+    ${usingLocal ? '<div class="card" style="grid-column:1/-1;border-color:var(--danger);margin-bottom:10px;"><div style="font-size:0.9rem;color:var(--danger);font-weight:600;">⚠️ 無法讀取 Lark，目前顯示本機暫存資料，請稍後重新整理。</div></div>' : ''}
     <div class="stat-card"><div class="stat-number">${reported}/${total}</div><div class="stat-label">已回報組數</div></div>
     <div class="stat-card highlight"><div class="stat-number">${d1Total + d2Total}</div><div class="stat-label">總參與人次</div></div>
     <div class="stat-card"><div class="stat-number">${d1Total}</div><div class="stat-label">6/3 總人數</div></div>
@@ -1433,41 +1562,45 @@ function renderStats() {
   });
   details += `</div>`;
 
-  // Group cards (mobile-friendly)
+  // Group cards
   details += `<div class="stats-section"><div class="stats-section-title">各組回報明細</div>`;
   for (let i = 1; i <= 9; i++) {
     const g = String(i);
     const d = all[g];
-    const d1m = d ? (d.d1?.members||[]).concat(d.d1?.extraMembers||[]) : [];
-    const d2m = d ? (d.d2?.members||[]).concat(d.d2?.extraMembers||[]) : [];
-    const d1Place = d && d.d1?.active ? (locations.d1||[]).find(p=>p.code===d.d1.location) : null;
-    const d2Place = d && d.d2?.active ? (locations.d2||[]).find(p=>p.code===d.d2.location) : null;
+    const d1m = d ? ((d.d1?.members||[]).concat(d.d1?.extraMembers||[])) : [];
+    const d2m = d ? ((d.d2?.members||[]).concat(d.d2?.extraMembers||[])) : [];
+    const d1Place = d && d.d1?.active ? { code: d.d1.location||'', ...(locations.d1||[]).find(p=>p.code===d.d1.location) } : null;
+    const d2Place = d && d.d2?.active ? { code: d.d2.location||'', ...(locations.d2||[]).find(p=>p.code===d.d2.location) } : null;
+    const hasData = !!d;
 
     details += `<div class="group-card">`;
     details += `<div class="group-card-header">`;
     details += `<span class="group-card-badge">第${g}組</span>`;
-    details += `<span class="group-card-status">${d ? (d.d1?.active||d.d2?.active?'已回報':'未填寫') : '未回報'}</span>`;
+    details += `<span class="group-card-status">${hasData ? '已回報' : '未回報'}</span>`;
     details += `</div>`;
 
-    if (d && d.d1?.active) {
+    if (hasData && d.d1?.active) {
       details += `<div class="group-row"><span class="group-row-label">6/3</span><span class="group-row-value">${d1Place ? d1Place.code+'｜'+d1Place.name : d.d1.location}｜${d1m.length}人</span></div>`;
-      details += `<div class="group-row"><span class="group-row-label">6/3人</span><span class="group-row-value">${d1m.join('、')}</span></div>`;
-    } else {
+      if (d1m.length > 0) details += `<div class="group-row"><span class="group-row-label">6/3人</span><span class="group-row-value">${d1m.join('、')}</span></div>`;
+    } else if (hasData) {
       details += `<div class="group-row"><span class="group-row-label">6/3</span><span class="group-row-value inactive">❌ 不參與</span></div>`;
+    } else {
+      details += `<div class="group-row"><span class="group-row-label">6/3</span><span class="group-row-value inactive">尚未回報</span></div>`;
     }
 
-    if (d && d.d2?.active) {
+    if (hasData && d.d2?.active) {
       details += `<div class="group-row"><span class="group-row-label">6/10</span><span class="group-row-value">${d2Place ? d2Place.code+'｜'+d2Place.name : d.d2.location}｜${d2m.length}人</span></div>`;
-      details += `<div class="group-row"><span class="group-row-label">6/10人</span><span class="group-row-value">${d2m.join('、')}</span></div>`;
-    } else {
+      if (d2m.length > 0) details += `<div class="group-row"><span class="group-row-label">6/10人</span><span class="group-row-value">${d2m.join('、')}</span></div>`;
+    } else if (hasData) {
       details += `<div class="group-row"><span class="group-row-label">6/10</span><span class="group-row-value inactive">❌ 不參與</span></div>`;
+    } else {
+      details += `<div class="group-row"><span class="group-row-label">6/10</span><span class="group-row-value inactive">尚未回報</span></div>`;
     }
 
     const notes = [d?.d1?.note||'', d?.d2?.note||''].filter(Boolean);
     if (notes.length > 0) {
       details += `<div class="group-row"><span class="group-row-label">備註</span><span class="group-row-value">${notes.join(' / ')}</span></div>`;
     }
-
     details += `</div>`;
   }
   details += `</div>`;
@@ -1485,8 +1618,19 @@ function renderStats() {
 /* ============================================================
    EXPORTS
    ============================================================ */
-function exportCSV() {
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+async function exportCSV() {
+  let all;
+  try {
+    if (larkCache && (Date.now() - larkCacheTime) < LARK_CACHE_TTL) {
+      all = larkCache;
+    } else {
+      all = await loadReportsFromLark();
+      larkCache = all;
+      larkCacheTime = Date.now();
+    }
+  } catch(e) {
+    all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  }
   const headers = ['組別','6/3參與','6/3地點','6/3地點名稱','6/3集合','6/3人數','6/3人員','6/3備註','6/10參與','6/10地點','6/10地點名稱','6/10集合','6/10人數','6/10人員','6/10備註','回報時間'];
   const rows = [headers.join(',')];
   for (let g = 1; g <= 9; g++) {
@@ -1519,8 +1663,19 @@ function exportCSV() {
   toast('📥 CSV 已下載');
 }
 
-function exportJSON() {
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+async function exportJSON() {
+  let all;
+  try {
+    if (larkCache && (Date.now() - larkCacheTime) < LARK_CACHE_TTL) {
+      all = larkCache;
+    } else {
+      all = await loadReportsFromLark();
+      larkCache = all;
+      larkCacheTime = Date.now();
+    }
+  } catch(e) {
+    all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  }
   downloadFile('dm_report.json', JSON.stringify(all, null, 2), 'application/json');
   toast('📥 JSON 已下載');
 }
@@ -1537,8 +1692,19 @@ function downloadFile(name, content, type) {
 /* ============================================================
    LINE TEXT
    ============================================================ */
-function getLineText() {
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+async function getLineText() {
+  let all;
+  try {
+    if (larkCache && (Date.now() - larkCacheTime) < LARK_CACHE_TTL) {
+      all = larkCache;
+    } else {
+      all = await loadReportsFromLark();
+      larkCache = all;
+      larkCacheTime = Date.now();
+    }
+  } catch(e) {
+    all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  }
   const places1 = locations.d1 || DEFAULT_LOCATIONS.d1;
   const places2 = locations.d2 || DEFAULT_LOCATIONS.d2;
   const d1Locs = {}, d2Locs = {};
@@ -1546,15 +1712,16 @@ function getLineText() {
 
   Object.keys(all).forEach(g => {
     const d = all[g];
+    if (!d) return;
     if (d.d1 && d.d1.active) {
-      const loc = d.d1.location;
+      const loc = d.d1.location || '';
       const members = (d.d1.members||[]).concat(d.d1.extraMembers||[]);
       d1Total += members.length;
       if (!d1Locs[loc]) d1Locs[loc] = [];
       d1Locs[loc].push({ group: '第'+g+'組', members });
     }
     if (d.d2 && d.d2.active) {
-      const loc = d.d2.location;
+      const loc = d.d2.location || '';
       const members = (d.d2.members||[]).concat(d.d2.extraMembers||[]);
       d2Total += members.length;
       if (!d2Locs[loc]) d2Locs[loc] = [];
@@ -1565,7 +1732,7 @@ function getLineText() {
   const notReported = [];
   for (let i = 1; i <= 9; i++) {
     const g = String(i);
-    if (!all[g] || (!all[g].d1?.active && !all[g].d2?.active)) notReported.push('第'+g+'組');
+    if (!all[g]) notReported.push('第'+g+'組');
   }
 
   let txt = '【第61期初級禪修班招生｜三晚初護持發心回報統計】\n\n';
@@ -1594,14 +1761,15 @@ function getLineText() {
   return txt;
 }
 
-function showLineText() {
+async function showLineText() {
   const area = document.getElementById('lineCopyArea');
   area.style.display = 'block';
-  area.textContent = getLineText();
+  area.textContent = await getLineText();
 }
 
-function copyLineText() {
-  navigator.clipboard.writeText(getLineText()).then(() => toast('📋 LINE 文字已複製'));
+async function copyLineText() {
+  const txt = await getLineText();
+  navigator.clipboard.writeText(txt).then(() => toast('📋 LINE 文字已複製'));
 }
 
 /* ============================================================
