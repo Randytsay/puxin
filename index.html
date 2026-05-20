@@ -833,13 +833,24 @@
 <div id="page-settings" class="page">
   <div id="settings-alert"></div>
 
+  <div class="notice-box" style="background:#fff3e0;border-color:#ffb74d;margin-bottom:16px;">
+    <h3 style="color:#e65100;">⚠️ 重要：請先填寫地點設定</h3>
+    <ul style="color:#5d4037;">
+      <li>「地點代碼」為固定代號（已預設，請勿修改）</li>
+      <li>「發放地點名稱」填寫實際發放位置（如：台北車站西門廣場）</li>
+      <li>「集合地點」填寫集合地點（如：西門捷運站1號出口）</li>
+      <li>總學員長（蔡耀文）需先到這個頁面填寫，各組學員長才能看到完整資訊</li>
+      <li>設定完成後按下「💾 儲存設定」即可</li>
+    </ul>
+  </div>
+
   <div class="card">
-    <div class="card-title">📍 6/3 地點設定</div>
+    <div class="card-title">📍 6/3（三）｜地點代碼：園1、賣2、聯1</div>
     <div id="settings-63"></div>
   </div>
 
   <div class="card">
-    <div class="card-title">📍 6/10 地點設定</div>
+    <div class="card-title">📍 6/10（三）｜地點代碼：掃1、精2、園2</div>
     <div id="settings-610"></div>
   </div>
 
@@ -890,14 +901,14 @@ const SETTINGS_KEY = 'dm_report_settings';
 
 const DEFAULT_LOCATIONS = {
   '63': [
-    { code: '園1', name: '（待設定）', meet: '（待設定）', note: '' },
-    { code: '賣2', name: '（待設定）', meet: '（待設定）', note: '' },
-    { code: '聯1', name: '（待設定）', meet: '（待設定）', note: '' },
+    { code: '園1', name: '公園路一帶', meet: '請填寫集合地點', note: '' },
+    { code: '賣2', name: '賣場/市集', meet: '請填寫集合地點', note: '' },
+    { code: '聯1', name: '聯絡處/據點', meet: '請填寫集合地點', note: '' },
   ],
   '610': [
-    { code: '掃1', name: '（待設定）', meet: '（待設定）', note: '' },
-    { code: '精2', name: '（待設定）', meet: '（待設定）', note: '' },
-    { code: '園2', name: '（待設定）', meet: '（待設定）', note: '' },
+    { code: '掃1', name: '掃街路線', meet: '請填寫集合地點', note: '' },
+    { code: '精2', name: '精舍/禪修中心', meet: '請填寫集合地點', note: '' },
+    { code: '園2', name: '公園路二帶', meet: '請填寫集合地點', note: '' },
   ]
 };
 
@@ -969,19 +980,26 @@ function renderLocationSelects() {
     const sel = document.getElementById(`loc${key}`);
     sel.innerHTML = '<option value="">請選擇地點</option>';
     locationSettings[key].forEach(loc => {
-      const label = loc.name && loc.name !== '（待設定）'
-        ? `${loc.code}｜${loc.name}`
-        : loc.code;
-      sel.innerHTML += `<option value="${loc.code}">${label}</option>`;
+      // Show code + name in dropdown; highlight if meet point not filled in
+      const meetHint = loc.meet && loc.meet !== '請填寫集合地點' ? `集合：${loc.meet}` : '⚠️ 請至「⚙️ 地點設定」填寫集合地點';
+      const displayName = loc.name && loc.name !== '請填寫集合地點' ? loc.name : loc.code;
+      sel.innerHTML += `<option value="${loc.code}">${loc.code}｜${displayName}｜${meetHint}</option>`;
     });
   });
 }
 
 function renderAnnounceLocations() {
-  const l63 = locationSettings['63'].map(l => `${l.code}（${l.name}）`).join('、');
-  const l610 = locationSettings['610'].map(l => `${l.code}（${l.name}）`).join('、');
-  document.getElementById('locations-63').textContent = l63;
-  document.getElementById('locations-610').textContent = l610;
+  // Show code + name + meet for each location
+  function locLine(key) {
+    return locationSettings[key].map(l => {
+      const meet = l.meet && l.meet !== '請填寫集合地點' ? `集合：${l.meet}` : '⚠️ 需至「⚙️ 地點設定」填寫集合地點';
+      return `　　${l.code}｜${l.name}（${meet}）`;
+    }).join('\n');
+  }
+  const l63 = locLine('63');
+  const l610 = locLine('610');
+  document.getElementById('locations-63').innerHTML = `<pre style="margin:6px 0 0 0;font-size:0.85rem;white-space:pre-wrap;line-height:1.8;color:var(--text);">${l63}</pre>`;
+  document.getElementById('locations-610').innerHTML = `<pre style="margin:6px 0 0 0;font-size:0.85rem;white-space:pre-wrap;line-height:1.8;color:var(--text);">${l610}</pre>`;
 }
 
 function renderLocationSettings() {
@@ -989,20 +1007,27 @@ function renderLocationSettings() {
     const container = document.getElementById(`settings-${key}`);
     container.innerHTML = '';
     locationSettings[key].forEach((loc, i) => {
+      const nameVal = (loc.name && loc.name !== '請填寫集合地點') ? loc.name : '';
+      const meetVal = (loc.meet && loc.meet !== '請填寫集合地點') ? loc.meet : '';
+      const namePh = loc.code === '園1' ? '例：台北車站西門廣場' :
+                     loc.code === '賣2' ? '例：家樂福台北店' :
+                     loc.code === '聯1' ? '例：里民中心' :
+                     loc.code === '掃1' ? '例：忠孝東路沿線' :
+                     loc.code === '精2' ? '例：內湖園區' : '例：公園路';
       container.innerHTML += `
         <div class="location-card">
-          <div class="location-card-header">${loc.code}</div>
+          <div class="location-card-header">📌 ${loc.code}</div>
           <div class="form-group" style="margin-bottom:8px;">
             <label>發放地點名稱</label>
-            <input type="text" id="loc-${key}-${i}-name" value="${loc.name}" placeholder="例：台北車站">
+            <input type="text" id="loc-${key}-${i}-name" value="${nameVal}" placeholder="${namePh}">
           </div>
           <div class="form-group" style="margin-bottom:8px;">
-            <label>集合地點</label>
-            <input type="text" id="loc-${key}-${i}-meet" value="${loc.meet}" placeholder="例：西門捷運站1號出口">
+            <label>集合地點（必填）</label>
+            <input type="text" id="loc-${key}-${i}-meet" value="${meetVal}" placeholder="例：西門捷運站1號出口">
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label>備註</label>
-            <input type="text" id="loc-${key}-${i}-note" value="${loc.note}" placeholder="其他補充">
+            <input type="text" id="loc-${key}-${i}-note" value="${loc.note || ''}" placeholder="其他補充">
           </div>
         </div>
       `;
