@@ -6,13 +6,14 @@
   <title>第61期初級禪修班｜三晚初發DM回報系統</title>
   <style>
     /* ============================================
-       CSS Variables & Reset
+       CSS Variables & Reset（手機優先）
     ============================================ */
     :root {
-      --primary: #1a3a5c;      /* 深藍 */
-      --secondary: #8b7355;   /* 褐色 */
-      --accent: #c9a96e;      /* 金色 */
-      --bg: #faf6f0;          /* 米色背景 */
+      --primary: #1a3a5c;
+      --primary-light: #2d5a87;
+      --secondary: #8b7355;
+      --accent: #c9a96e;
+      --bg: #faf6f0;
       --card: #ffffff;
       --text: #2c2c2c;
       --text-light: #666;
@@ -20,37 +21,41 @@
       --success: #4a7c59;
       --danger: #a04040;
       --warning: #b8860b;
+      --orange: #e65100;
+      --radius: 14px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
+    html { font-size: 18px; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.7;
       min-height: 100vh;
-      padding-bottom: 80px;
+      padding-bottom: 90px;
+      -webkit-text-size-adjust: 100%;
     }
 
     /* ============================================
        Header
     ============================================ */
     .header {
-      background: linear-gradient(135deg, var(--primary) 0%, #2d5a87 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       color: white;
-      padding: 20px 16px;
+      padding: 18px 16px 16px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
     }
     .header h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 600;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
     }
-    .header p {
-      font-size: 0.85rem;
+    .header .subtitle {
+      font-size: 0.9rem;
       opacity: 0.85;
       margin-top: 4px;
     }
@@ -67,27 +72,30 @@
       z-index: 100;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
     }
+    .tabs::-webkit-scrollbar { display: none; }
+
     .tab {
       flex: 1;
-      min-width: 90px;
-      padding: 12px 8px;
+      min-width: 80px;
+      padding: 14px 10px;
       text-align: center;
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-size: 0.95rem;
+      font-weight: 600;
       color: var(--text-light);
       cursor: pointer;
       border: none;
       background: none;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
+      border-bottom: 4px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
       white-space: nowrap;
+      scroll-snap-align: start;
     }
     .tab.active {
       color: var(--primary);
       border-bottom-color: var(--primary);
     }
-    .tab:hover { color: var(--primary); }
 
     /* ============================================
        Page Sections
@@ -96,114 +104,467 @@
     .page.active { display: block; }
 
     /* ============================================
+       Typography
+    ============================================ */
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    h2 { font-size: 1.25rem; font-weight: 700; }
+    h3 { font-size: 1.1rem; font-weight: 600; }
+    p  { font-size: 1rem; line-height: 1.8; margin-bottom: 10px; }
+    small { font-size: 0.85rem; }
+
+    /* ============================================
        Cards
     ============================================ */
     .card {
       background: var(--card);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
       border: 1px solid var(--border);
     }
     .card-title {
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
       color: var(--primary);
       margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
     }
 
     /* ============================================
-       Form Elements
+       Hero CTA Button（首頁主按鈕）
+    ============================================ */
+    .hero-btn {
+      display: block;
+      width: 100%;
+      padding: 18px 24px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--success) 0%, #5a9469 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(74,124,89,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .hero-btn:active { transform: scale(0.97); }
+
+    /* ============================================
+       Date Event Cards（首頁日期卡片）
+    ============================================ */
+    .event-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+    }
+    .event-card.date-2 { border-left-color: var(--secondary); }
+    .event-card .event-date {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .event-card.date-2 .event-date { color: var(--secondary); }
+    .event-card .event-locations {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* ============================================
+       Collapsible Sections（可展開收合區塊）
+    ============================================ */
+    .collapse-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+      transition: background 0.15s;
+    }
+    .collapse-toggle:hover { background: #f5f0e8; }
+    .collapse-toggle .arrow {
+      font-size: 0.85rem;
+      transition: transform 0.25s;
+    }
+    .collapse-toggle.open .arrow { transform: rotate(180deg); }
+
+    .collapse-content {
+      display: none;
+      padding: 14px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      margin-bottom: 14px;
+    }
+    .collapse-content.open { display: block; }
+
+    /* ============================================
+       Notice / Reminder Cards
+    ============================================ */
+    .reminder-card {
+      background: #fff9e6;
+      border: 1px solid #e6d5a8;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .reminder-card .reminder-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--warning);
+      margin-bottom: 8px;
+    }
+    .reminder-card ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .reminder-card li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 5px;
+      color: #5a4a2a;
+    }
+
+    .info-card {
+      background: #e8f0ff;
+      border: 1px solid #a0b8e8;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .info-card .info-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2d5a87;
+      margin-bottom: 8px;
+    }
+
+    /* ============================================
+       Form Elements（手機優先尺寸）
     ============================================ */
     label {
       display: block;
-      font-size: 0.9rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 600;
       color: var(--text);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .required::after { content: ' *'; color: var(--danger); }
 
     input[type="text"],
     input[type="tel"],
+    input[type="email"],
     select,
     textarea {
       width: 100%;
-      padding: 10px 12px;
+      padding: 14px 14px;
       font-size: 1rem;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
+      font-family: inherit;
+      border: 2px solid var(--border);
+      border-radius: 10px;
       background: #fff;
       color: var(--text);
       transition: border-color 0.2s;
       -webkit-appearance: none;
       appearance: none;
+      line-height: 1.5;
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
     }
-    textarea { resize: vertical; min-height: 80px; }
+    input::placeholder, textarea::placeholder { color: #bbb; font-size: 0.95rem; }
+    textarea { resize: vertical; min-height: 100px; }
 
-    .form-group {
+    .form-group { margin-bottom: 16px; }
+
+    /* ============================================
+       Toggle Buttons（是/否 大按鈕）
+    ============================================ */
+    .toggle-group {
+      display: flex;
+      gap: 10px;
       margin-bottom: 14px;
     }
-
-    .radio-group, .checkbox-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .radio-item, .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-    .radio-item input, .checkbox-item input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--primary);
-    }
-
-    /* Participant list */
-    .participant-list {
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
+    .toggle-btn {
+      flex: 1;
+      padding: 14px 8px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border: 2.5px solid var(--border);
+      border-radius: 10px;
       background: #fff;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .toggle-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    .toggle-btn.selected.no {
+      border-color: var(--danger);
+      background: var(--danger);
+    }
+    .toggle-btn:active { transform: scale(0.96); }
+
+    /* ============================================
+       Location Big Buttons（地點大按鈕選擇）
+    ============================================ */
+    .loc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .loc-btn {
+      padding: 14px 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 2.5px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .loc-btn .loc-code {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+    .loc-btn .loc-hint {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .loc-btn.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    .loc-btn.selected .loc-hint { color: rgba(255,255,255,0.8); }
+    .loc-btn:active { transform: scale(0.96); }
+    .loc-btn.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* ============================================
+       Participant List（參與人員）
+    ============================================ */
+    .participant-section {
+      margin-bottom: 14px;
+    }
+    .participant-list {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+      min-height: 52px;
     }
     .participant-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 0;
+      gap: 10px;
+      padding: 10px 0;
       border-bottom: 1px solid var(--border);
     }
     .participant-item:last-child { border-bottom: none; }
     .participant-item span {
       flex: 1;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      line-height: 1.5;
     }
-    .participant-item button {
+    .participant-item .del-btn {
       background: var(--danger);
       color: white;
       border: none;
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-size: 14px;
+      width: 32px;
+      height: 32px;
+      font-size: 1.1rem;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
     .add-participant {
       display: flex;
-      gap: 8px;
-      margin-top: 8px;
+      gap: 10px;
+      margin-top: 10px;
     }
-    .add-participant input { flex: 1; }
+    .add-participant input { flex: 1; min-height: 48px; }
+    .add-participant .btn-add {
+      min-height: 48px;
+      padding: 0 18px;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .empty-participants {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      padding: 4px 0;
+    }
+
+    /* ============================================
+       Section Dividers in Form
+    ============================================ */
+    .form-section-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 20px 0 14px;
+      text-align: center;
+    }
+    .form-section-header.second {
+      background: linear-gradient(135deg, var(--secondary) 0%, #a08060 100%);
+    }
+
+    /* ============================================
+       Toggle Details（是否參與切換）
+    ============================================ */
+    .toggle-details { margin-bottom: 14px; }
+    .toggle-details.hidden { display: none; }
+
+    /* ============================================
+       Stats Page
+    ============================================ */
+    .stats-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-box {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .stat-box .stat-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+    .stat-box .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    .stat-box.highlight {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .stat-box.highlight .stat-num { color: white; }
+    .stat-box.highlight .stat-label { color: rgba(255,255,255,0.8); }
+
+    /* Location stats */
+    .loc-stat-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .loc-stat-header {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .loc-stat-header .count-badge {
+      background: var(--primary);
+      color: white;
+      font-size: 0.85rem;
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .loc-stat-row {
+      display: flex;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 0.95rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .loc-stat-row:last-child { border-bottom: none; }
+    .loc-stat-row .grp { font-weight: 600; min-width: 55px; }
+    .loc-stat-row .names { color: var(--text-light); flex: 1; }
+    .loc-stat-meet {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Group detail cards */
+    .group-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+    }
+    .group-card.no-report {
+      border-left-color: var(--danger);
+      opacity: 0.7;
+    }
+    .group-card-header {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .group-card-row {
+      display: flex;
+      gap: 6px;
+      font-size: 0.9rem;
+      padding: 4px 0;
+      line-height: 1.5;
+    }
+    .group-card-row .label { font-weight: 600; min-width: 55px; }
+    .group-card-row .val { flex: 1; color: var(--text-light); }
+    .group-card-row .val.active { color: var(--success); font-weight: 600; }
 
     /* ============================================
        Buttons
@@ -213,303 +574,223 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 12px 20px;
+      padding: 14px 20px;
       font-size: 1rem;
       font-weight: 600;
+      font-family: inherit;
       border: none;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
       text-decoration: none;
       -webkit-tap-highlight-color: transparent;
+      line-height: 1.4;
     }
     .btn-primary {
       background: var(--primary);
       color: white;
     }
-    .btn-primary:hover { background: #2d5a87; }
+    .btn-primary:hover { background: var(--primary-light); }
     .btn-primary:active { transform: scale(0.97); }
 
-    .btn-secondary {
-      background: var(--secondary);
+    .btn-success {
+      background: var(--success);
       color: white;
     }
+    .btn-success:hover { background: #5a9469; }
+    .btn-success:active { transform: scale(0.97); }
+
     .btn-outline {
       background: transparent;
       color: var(--primary);
       border: 2px solid var(--primary);
     }
-    .btn-sm {
-      padding: 8px 14px;
-      font-size: 0.9rem;
+    .btn-outline:active { background: var(--primary); color: white; }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: white;
     }
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
     .btn-block { width: 100%; }
-
-    .btn-add {
-      background: var(--success);
-      color: white;
-      padding: 8px 14px;
-      font-size: 0.9rem;
-    }
-
-    /* ============================================
-       Notice Box
-    ============================================ */
-    .notice-box {
-      background: #fff9e6;
-      border: 1px solid #e6d5a8;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 14px;
-      font-size: 0.9rem;
-    }
-    .notice-box h3 {
-      color: var(--warning);
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
-    .notice-box ul {
-      margin-left: 18px;
-      color: #5a4a2a;
-    }
-    .notice-box li { margin-bottom: 4px; }
-
-    /* ============================================
-       Announcement (複製用)
-    ============================================ */
-    .announcement-text {
-      background: #f5f0e8;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-      line-height: 1.8;
-      margin-bottom: 12px;
-    }
-
-    /* ============================================
-       Stats Cards
-    ============================================ */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .stat-card {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-    .stat-card .num {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .stat-card .label {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      margin-top: 2px;
-    }
-    .stat-card.highlight {
-      background: linear-gradient(135deg, var(--primary), #2d5a87);
-      color: white;
-    }
-    .stat-card.highlight .num { color: white; }
-    .stat-card.highlight .label { color: rgba(255,255,255,0.8); }
-
-    /* ============================================
-       Group Table (統計總表)
-    ============================================ */
-    .group-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      overflow-x: auto;
-      display: block;
-    }
-    .group-table th {
-      background: var(--primary);
-      color: white;
-      padding: 8px 6px;
-      text-align: left;
-      white-space: nowrap;
-    }
-    .group-table td {
-      padding: 8px 6px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-    .group-table tr:nth-child(even) td { background: #f9f5ef; }
-    .group-table { background: var(--card); border-radius: 10px; overflow: hidden; }
-
-    /* Location stats */
-    .location-group {
-      background: var(--card);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-      border: 1px solid var(--border);
-    }
-    .location-group h4 {
-      font-size: 0.95rem;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-    .location-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px dashed var(--border);
-      font-size: 0.9rem;
-    }
-    .location-row:last-child { border-bottom: none; }
-    .location-name { font-weight: 600; min-width: 50px; }
-    .location-info { color: var(--text-light); font-size: 0.85rem; }
-
-    /* ============================================
-       Settings Page
-    ============================================ */
-    .location-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-    .location-card-header {
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 8px;
-      font-size: 0.95rem;
+    .btn-lg {
+      padding: 16px 24px;
+      font-size: 1.1rem;
     }
 
     /* ============================================
        Alert / Toast
     ============================================ */
     .alert {
-      padding: 12px 16px;
+      padding: 14px 16px;
       border-radius: 10px;
       margin-bottom: 14px;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      line-height: 1.6;
     }
-    .alert-success {
-      background: #e8f5e9;
-      color: var(--success);
-      border: 1px solid #a5d6a7;
-    }
-    .alert-error {
-      background: #ffebee;
-      color: var(--danger);
-      border: 1px solid #ef9a9a;
-    }
+    .alert-success { background: #e8f5e9; color: var(--success); border: 1px solid #a5d6a7; }
+    .alert-error   { background: #ffebee; color: var(--danger);  border: 1px solid #ef9a9a; }
 
     .toast {
       position: fixed;
-      bottom: 80px;
+      bottom: 90px;
       left: 50%;
       transform: translateX(-50%);
       background: var(--primary);
       color: white;
       padding: 12px 24px;
       border-radius: 30px;
-      font-size: 0.95rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 1rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
       z-index: 1000;
       opacity: 0;
       transition: opacity 0.3s;
+      white-space: nowrap;
     }
     .toast.show { opacity: 1; }
 
     /* ============================================
-       Export buttons
-    ============================================ */
-    .export-btns {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    /* ============================================
-       Pending groups
-    ============================================ */
-    .pending-groups {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .pending-tag {
-      background: #ffebee;
-      color: var(--danger);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-    .all-done {
-      color: var(--success);
-      font-weight: 600;
-    }
-
-    /* ============================================
-       Section dividers in form
-    ============================================ */
-    .section-divider {
-      background: linear-gradient(90deg, var(--primary) 0%, #4a7cb5 100%);
-      color: white;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      margin: 20px 0 14px;
-    }
-    .section-divider.second { background: linear-gradient(90deg, var(--secondary) 0%, #a08060 100%); }
-
-    /* ============================================
-       Modal (confirm dialog)
+       Modal（確認視窗）
     ============================================ */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.55);
       z-index: 200;
       display: none;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      padding: 16px;
     }
     .modal-overlay.show { display: flex; }
     .modal {
       background: white;
-      border-radius: 16px;
-      padding: 20px;
-      max-width: 400px;
+      border-radius: 20px 20px 0 0;
+      padding: 24px;
+      max-width: 680px;
       width: 100%;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
     }
-    .modal h3 { margin-bottom: 12px; color: var(--primary); }
-    .modal-content { font-size: 0.9rem; line-height: 1.7; margin-bottom: 16px; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal h3 { font-size: 1.15rem; margin-bottom: 14px; color: var(--primary); }
+    .modal-content { font-size: 1rem; line-height: 1.8; margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-actions .btn { flex: 1; font-size: 1.05rem; padding: 16px; }
+
+    /* ============================================
+       Announcement Text
+    ============================================ */
+    .announcement-text {
+      background: #f5f0e8;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+      line-height: 2;
+      margin-bottom: 14px;
+    }
+
+    /* ============================================
+       Export Buttons
+    ============================================ */
+    .export-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ============================================
+       Settings Page
+    ============================================ */
+    .settings-warning {
+      background: #fff3e0;
+      border: 1px solid #ffb74d;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      color: var(--orange);
+    }
+    .settings-warning strong { font-size: 1rem; }
+
+    .location-setting-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .location-setting-header {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    /* Advanced settings (collapsed) */
+    .advanced-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #f5f0e8;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-top: 8px;
+    }
+    .advanced-toggle .arrow { transition: transform 0.25s; font-size: 0.8rem; }
+    .advanced-toggle.open .arrow { transform: rotate(180deg); }
+    .advanced-content { display: none; padding: 14px 0 4px; }
+    .advanced-content.open { display: block; }
+
+    /* ============================================
+       Pending Groups
+    ============================================ */
+    .pending-groups { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pending-tag {
+      background: #ffebee;
+      color: var(--danger);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .all-done-tag {
+      background: #e8f5e9;
+      color: var(--success);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
 
     /* ============================================
        Responsive
     ============================================ */
-    @media (max-width: 480px) {
-      .header h1 { font-size: 1.1rem; }
-      .tab { min-width: 75px; font-size: 0.8rem; padding: 10px 6px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .group-table { font-size: 0.75rem; }
-      .group-table th, .group-table td { padding: 6px 4px; }
-    }
     @media (min-width: 640px) {
+      html { font-size: 17px; }
       .page { padding: 24px; }
-      .card { padding: 20px; }
+      .card { padding: 22px; }
+      .loc-grid { grid-template-columns: repeat(3, 1fr); }
+      .export-grid { flex-direction: row; flex-wrap: wrap; }
+      .export-grid .btn { flex: 1; min-width: 140px; }
+      .modal { border-radius: 20px; align-items: center; max-width: 500px; }
+      .modal-actions .btn { flex: none; width: auto; padding: 14px 24px; }
+    }
+
+    /* hide native radio/checkbox visually */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); border: 0;
     }
   </style>
 </head>
@@ -520,65 +801,77 @@
 ============================================ -->
 <div class="header">
   <h1>🪷 第61期初級禪修班｜三晚初發DM回報系統</h1>
-  <p>總學員長：蔡耀文</p>
+  <div class="subtitle">總學員長：蔡耀文</div>
 </div>
 
 <!-- ============================================
      Tabs
 ============================================ -->
 <nav class="tabs">
-  <button class="tab active" data-tab="announce">📋 公告說明</button>
-  <button class="tab" data-tab="form">📝 學員長回報</button>
-  <button class="tab" data-tab="stats">📊 統計總表</button>
+  <button class="tab active" data-tab="announce">📋 說明</button>
+  <button class="tab" data-tab="form">📝 填寫回報</button>
+  <button class="tab" data-tab="stats">📊 統計</button>
   <button class="tab" data-tab="settings">⚙️ 地點設定</button>
 </nav>
 
 <!-- ============================================
-     Page 1: 公告說明
+     Page 1: 公告說明（首頁）
 ============================================ -->
 <div id="page-announce" class="page active">
-  <div class="card">
-    <div class="card-title">📌 活動目的</div>
-    <p>為 <strong>第61期初級禪修班招生</strong>，我們將在兩個週次發放 DM 與面紙包，將禪修班資訊分享給更多有緣人。</p>
-  </div>
 
-  <div class="card">
-    <div class="card-title">📅 發放時間與地點</div>
-    <div style="margin-bottom:12px;">
-      <strong>第一梯次｜6/3（三）晚上 8:00～9:00</strong>
-      <div style="color:var(--text-light);font-size:0.85rem;margin-top:4px;" id="locations-63"></div>
-    </div>
-    <div>
-      <strong>第二梯次｜6/10（三）晚上 8:00～9:00</strong>
-      <div style="color:var(--text-light);font-size:0.85rem;margin-top:4px;" id="locations-610"></div>
-    </div>
-  </div>
+  <!-- 主 CTA 按鈕 -->
+  <button class="hero-btn" onclick="switchTab('form')">
+    📝 我要填寫回報
+  </button>
 
-  <div class="notice-box">
-    <h3>⚠️ 注意事項</h3>
+  <!-- 提醒卡片 -->
+  <div class="reminder-card">
+    <div class="reminder-title">💡 填寫說明</div>
     <ul>
-      <li>每次選<strong>3個不同地點</strong>讓學員登記</li>
-      <li>精舍集合，或自行前往指定地點集合，圓滿後原地解散</li>
-      <li>帶隊學長請於前一日備妥所有物料，結束後請帶回原位</li>
-      <li>物料包含：背心紅色與藍色、面紙包、DM、基本資料表、筆、海報、看板等</li>
-      <li>背心需清洗後才歸還</li>
-      <li>到定點後，請拍團體照留念</li>
-      <li>發放時請保持親切、自然、莊嚴，重點是結善緣，不勉強、不推銷</li>
-      <li><strong>鼓勵同一組盡量選擇同一地點</strong>，方便集合、帶隊、領物資與彼此照應</li>
+      <li>請各組學員長<strong>統計自己組內師兄</strong>後，再統一填寫</li>
+      <li>每組由學員長<strong>統一回報</strong>一次即可</li>
+      <li>若要修改資料，重新送出<strong>同組資料即可覆蓋更新</strong></li>
+      <li>鼓勵同一組師兄盡量選擇<strong>同一地點</strong></li>
     </ul>
   </div>
 
-  <div class="notice-box" style="background:#e8f0ff;border-color:#a0b8e8;">
-    <h3>💡 填寫提醒</h3>
-    <ul>
-      <li>請各組學員長協助統計自己組內師兄，<strong>再統一送出回報</strong></li>
-      <li>同一組可重複填寫（系統會自動更新為最新資料）</li>
-      <li>資料會同步到 <strong>Lark Base</strong>，總學員長可即時查看</li>
+  <!-- 活動日期卡片 -->
+  <h2 style="font-size:1.1rem;color:var(--primary);margin-bottom:8px;">📅 發放日程</h2>
+
+  <div class="event-card">
+    <div class="event-date">第一梯次｜6/3（三）晚上 8:00～9:00</div>
+    <div class="event-locations" id="announce-locs-63">載入中…</div>
+  </div>
+
+  <div class="event-card date-2">
+    <div class="event-date">第二梯次｜6/10（三）晚上 8:00～9:00</div>
+    <div class="event-locations" id="announce-locs-610">載入中…</div>
+  </div>
+
+  <!-- 注意事項（可展開） -->
+  <button class="collapse-toggle" onclick="toggleCollapse(this)" type="button">
+    <span>📌 注意事項</span>
+    <span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <ul style="margin:0;padding-left:20px;">
+      <li style="margin-bottom:8px;font-size:0.95rem;">每次選<strong>3個不同地點</strong>讓學員登記</li>
+      <li style="margin-bottom:8px;font-size:0.95rem;">精舍集合，或自行前往指定地點集合，圓滿後原地解散</li>
+      <li style="margin-bottom:8px;font-size:0.95rem;">帶隊學長請於前一日備妥所有物料，結束後請帶回原位</li>
+      <li style="margin-bottom:8px;font-size:0.95rem;">物料包含：背心紅色與藍色、面紙包、DM、基本資料表、筆、海報、看板等</li>
+      <li style="margin-bottom:8px;font-size:0.95rem;">背心需清洗後才歸還</li>
+      <li style="margin-bottom:8px;font-size:0.95rem;">到定點後，請拍團體照留念</li>
+      <li style="margin-bottom:8px;font-size:0.95rem;">發放時請保持親切、自然、莊嚴，重點是結善緣，不勉強、不推銷</li>
+      <li style="font-size:0.95rem;"><strong>鼓勵同一組盡量選擇同一地點</strong>，方便集合、帶隊、領物資與彼此照應</li>
     </ul>
   </div>
 
-  <div class="card">
-    <div class="card-title">📋 LINE 群組公告文字</div>
+  <!-- LINE 公告文字（可展開） -->
+  <button class="collapse-toggle" onclick="toggleCollapse(this)" type="button">
+    <span>📋 LINE 群組公告文字</span>
+    <span class="arrow">▼</span>
+  </button>
+  <div class="collapse-content">
     <div class="announcement-text" id="announcement-text">各位初級班師兄大家好，阿彌陀佛。
 
 我是初級班總學員長蔡耀文。
@@ -596,16 +889,18 @@
 感恩各位師兄一起發心，讓更多有緣人有機會接觸禪修、認識佛法，也成就我們自己一份護持招生的功德。
 
 阿彌陀佛。</div>
-    <button class="btn btn-primary btn-sm btn-block" onclick="copyAnnouncement()">📋 複製公告文字</button>
+    <button class="btn btn-primary btn-block btn-lg" onclick="copyAnnouncement()">
+      📋 複製公告文字
+    </button>
   </div>
 
-  <div class="card">
-    <div class="card-title">🔗 快速連結</div>
-    <a href="https://psgi7t86exuf.sg.larksuite.com/base/LiRqbp72naWKRRsMNYTl5cjTgof" target="_blank" class="btn btn-outline btn-sm btn-block" style="margin-bottom:8px;">
-      📊 開啟 Lark Base 統計表
-    </a>
-    <button class="btn btn-secondary btn-sm btn-block" onclick="switchTab('form')">📝 我要填寫回報</button>
+  <!-- Lark Base 連結（低調，放在最下面） -->
+  <div style="text-align:center;margin-top:8px;">
+    <button class="btn btn-outline btn-sm" style="font-size:0.85rem;padding:8px 14px;" onclick="switchTab('stats')">
+      📊 前往統計頁
+    </button>
   </div>
+
 </div>
 
 <!-- ============================================
@@ -614,11 +909,19 @@
 <div id="page-form" class="page">
   <div id="form-alert"></div>
 
-  <form id="report-form" onsubmit="return handleSubmit(event)">
-    <!-- 基本資料 -->
+  <form id="report-form" onsubmit="return handleSubmit(event)" novalidate>
+
+    <!-- 提醒橫幅 -->
+    <div class="reminder-card" style="margin-bottom:14px;">
+      <ul style="margin:0;padding-left:18px;">
+        <li style="font-size:0.95rem;">請先統計組內師兄，再統一填寫送出</li>
+        <li style="font-size:0.95rem;">同一組重複送出，系統會自動覆蓋為最新資料</li>
+      </ul>
+    </div>
+
+    <!-- 基本資料卡片 -->
     <div class="card">
       <div class="card-title">👤 基本資料</div>
-
       <div class="form-group">
         <label class="required">組別</label>
         <select id="group" required onchange="loadGroupData()">
@@ -634,120 +937,119 @@
           <option value="9">第9組</option>
         </select>
       </div>
-
       <div class="form-group">
         <label class="required">組學員長姓名</label>
-        <input type="text" id="leader-name" placeholder="請輸入姓名" required>
+        <input type="text" id="leader-name" placeholder="請輸入您的姓名" required>
       </div>
-
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:0;">
         <label>聯絡方式</label>
         <input type="text" id="contact" placeholder="LINE 名稱或電話（非必填）">
       </div>
     </div>
 
-    <!-- 6/3 填報區 -->
-    <div class="section-divider">第一梯次｜6/3（三）晚上 8:00～9:00</div>
+    <!-- ===== 6/3 第一梯次 ===== -->
+    <div class="form-section-header">第一梯次｜6/3（三）晚上 8:00～9:00</div>
 
     <div class="card">
-      <div class="form-group">
-        <label class="required">是否參與</label>
-        <div class="radio-group">
-          <label class="radio-item">
-            <input type="radio" name="j63" value="是" required onchange="toggle63()"> 是
-          </label>
-          <label class="radio-item">
-            <input type="radio" name="j63" value="否" onchange="toggle63()"> 否
-          </label>
-        </div>
+      <div class="card-title" style="font-size:1rem;">是否參與</div>
+      <div class="toggle-group" id="toggle-63">
+        <button type="button" class="toggle-btn" onclick="setToggle('63','是',this)">✅ 可以參與</button>
+        <button type="button" class="toggle-btn no" onclick="setToggle('63','否',this)">❌ 本週不方便</button>
       </div>
+      <input type="radio" name="j63" value="是" id="j63-yes" class="sr-only" required>
+      <input type="radio" name="j63" value="否" id="j63-no"  class="sr-only">
 
-      <div id="form-63-details">
+      <!-- 參與詳情（選擇「是」時顯示） -->
+      <div id="details-63" class="toggle-details hidden">
+
         <div class="form-group">
           <label class="required">選擇地點</label>
-          <select id="loc63">
-            <option value="">請選擇地點</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>集合地點說明</label>
-          <input type="text" id="meet63" placeholder="請填寫實際集合地點">
-        </div>
-
-        <div class="form-group">
-          <label class="required">參與人員名單</label>
-          <div class="participant-list" id="participants-63"></div>
-          <div class="add-participant">
-            <input type="text" id="input-63" placeholder="輸入姓名後按新增">
-            <button type="button" class="btn btn-add" onclick="addParticipant('63')">+ 新增</button>
+          <div class="loc-grid" id="loc-grid-63">
+            <!-- 動態生成 -->
           </div>
         </div>
 
         <div class="form-group">
+          <label>集合地點說明</label>
+          <input type="text" id="meet63" placeholder="請填寫實際集合地點（如：西門捷運站1號出口）">
+        </div>
+
+        <div class="participant-section">
+          <label class="required">參與人員名單</label>
+          <div class="participant-list" id="participants-63">
+            <div class="empty-participants">尚無參與人員，請新增</div>
+          </div>
+          <div class="add-participant">
+            <input type="text" id="input-63" placeholder="輸入姓名後按新增">
+            <button type="button" class="btn-add" onclick="addParticipant('63')">＋ 新增</button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
           <label>備註</label>
-          <textarea id="note63" placeholder="任何補充說明"></textarea>
+          <textarea id="note63" placeholder="任何補充說明（非必填）"></textarea>
         </div>
       </div>
     </div>
 
-    <!-- 6/10 填報區 -->
-    <div class="section-divider second">第二梯次｜6/10（三）晚上 8:00～9:00</div>
+    <!-- ===== 6/10 第二梯次 ===== -->
+    <div class="form-section-header second">第二梯次｜6/10（三）晚上 8:00～9:00</div>
 
     <div class="card">
-      <div class="form-group">
-        <label class="required">是否參與</label>
-        <div class="radio-group">
-          <label class="radio-item">
-            <input type="radio" name="j610" value="是" required onchange="toggle610()"> 是
-          </label>
-          <label class="radio-item">
-            <input type="radio" name="j610" value="否" onchange="toggle610()"> 否
-          </label>
-        </div>
+      <div class="card-title" style="font-size:1rem;">是否參與</div>
+      <div class="toggle-group" id="toggle-610">
+        <button type="button" class="toggle-btn" onclick="setToggle('610','是',this)">✅ 可以參與</button>
+        <button type="button" class="toggle-btn no" onclick="setToggle('610','否',this)">❌ 本週不方便</button>
       </div>
+      <input type="radio" name="j610" value="是" id="j610-yes" class="sr-only" required>
+      <input type="radio" name="j610" value="否" id="j610-no"  class="sr-only">
 
-      <div id="form-610-details">
+      <!-- 參與詳情（選擇「是」時顯示） -->
+      <div id="details-610" class="toggle-details hidden">
+
         <div class="form-group">
           <label class="required">選擇地點</label>
-          <select id="loc610">
-            <option value="">請選擇地點</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>集合地點說明</label>
-          <input type="text" id="meet610" placeholder="請填寫實際集合地點">
-        </div>
-
-        <div class="form-group">
-          <label class="required">參與人員名單</label>
-          <div class="participant-list" id="participants-610"></div>
-          <div class="add-participant">
-            <input type="text" id="input-610" placeholder="輸入姓名後按新增">
-            <button type="button" class="btn btn-add" onclick="addParticipant('610')">+ 新增</button>
+          <div class="loc-grid" id="loc-grid-610">
+            <!-- 動態生成 -->
           </div>
         </div>
 
         <div class="form-group">
+          <label>集合地點說明</label>
+          <input type="text" id="meet610" placeholder="請填寫實際集合地點（如：西門捷運站1號出口）">
+        </div>
+
+        <div class="participant-section">
+          <label class="required">參與人員名單</label>
+          <div class="participant-list" id="participants-610">
+            <div class="empty-participants">尚無參與人員，請新增</div>
+          </div>
+          <div class="add-participant">
+            <input type="text" id="input-610" placeholder="輸入姓名後按新增">
+            <button type="button" class="btn-add" onclick="addParticipant('610')">＋ 新增</button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
           <label>備註</label>
-          <textarea id="note610" placeholder="任何補充說明"></textarea>
+          <textarea id="note610" placeholder="任何補充說明（非必填）"></textarea>
         </div>
       </div>
     </div>
 
     <!-- 總備註 -->
     <div class="card">
-      <div class="form-group">
+      <div class="form-group" style="margin-bottom:0;">
         <label>其他備註</label>
-        <textarea id="note-general" placeholder="針對兩週次或其他事項的補充"></textarea>
+        <textarea id="note-general" placeholder="針對兩週次或其他事項的補充（非必填）"></textarea>
       </div>
     </div>
 
     <!-- 送出按鈕 -->
-    <button type="submit" class="btn btn-primary btn-block" style="margin-bottom:20px;">
+    <button type="submit" class="btn btn-success btn-block btn-lg" style="margin-top:6px;">
       ✅ 送出回報
     </button>
+
   </form>
 </div>
 
@@ -757,74 +1059,71 @@
 <div id="page-stats" class="page">
   <div id="stats-alert"></div>
 
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="num" id="stat-reported">0</div>
-      <div class="label">已回報組數</div>
+  <!-- 數字統計區 -->
+  <div class="stats-hero">
+    <div class="stat-box highlight">
+      <div class="stat-num" id="stat-reported">0</div>
+      <div class="stat-label">已回報組數</div>
     </div>
-    <div class="stat-card highlight">
-      <div class="num">/9</div>
-      <div class="label">總組數</div>
+    <div class="stat-box">
+      <div class="stat-num">/9</div>
+      <div class="stat-label">總組數</div>
     </div>
-    <div class="stat-card">
-      <div class="num" id="stat-63">0</div>
-      <div class="label">6/3 參與人數</div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-63">0</div>
+      <div class="stat-label">6/3 參與人數</div>
     </div>
-    <div class="stat-card">
-      <div class="num" id="stat-610">0</div>
-      <div class="label">6/10 參與人數</div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-610">0</div>
+      <div class="stat-label">6/10 參與人數</div>
     </div>
   </div>
 
+  <!-- 尚未回報 -->
   <div class="card">
     <div class="card-title">⚠️ 尚未回報組別</div>
     <div id="pending-groups" class="pending-groups"></div>
   </div>
 
+  <!-- 6/3 各地點統計 -->
   <div class="card">
     <div class="card-title">📍 6/3 各地點統計</div>
     <div id="stats-63-locations"></div>
   </div>
 
+  <!-- 6/10 各地點統計 -->
   <div class="card">
     <div class="card-title">📍 6/10 各地點統計</div>
     <div id="stats-610-locations"></div>
   </div>
 
+  <!-- 各組明細（卡片式） -->
   <div class="card">
-    <div class="card-title">📋 各組回報明細</div>
-    <div style="overflow-x:auto;">
-      <table class="group-table" id="group-table">
-        <thead>
-          <tr>
-            <th>組</th>
-            <th>學員長</th>
-            <th>6/3地</th>
-            <th>6/3集合</th>
-            <th>6/3人</th>
-            <th>6/10地</th>
-            <th>6/10集合</th>
-            <th>6/10人</th>
-            <th>備註</th>
-          </tr>
-        </thead>
-        <tbody id="group-table-body"></tbody>
-      </table>
-    </div>
+    <div class="card-title">👥 各組回報明細</div>
+    <div id="group-cards"></div>
   </div>
 
+  <!-- 匯出 -->
   <div class="card">
     <div class="card-title">📤 匯出資料</div>
-    <div class="export-btns">
-      <button class="btn btn-primary btn-sm" onclick="exportCSV()">📥 CSV</button>
-      <button class="btn btn-primary btn-sm" onclick="exportJSON()">📥 JSON</button>
-      <button class="btn btn-secondary btn-sm" onclick="copyLineText()">📋 複製 LINE 文字</button>
+    <div class="export-grid">
+      <button class="btn btn-primary" onclick="exportCSV()">📥 匯出 CSV</button>
+      <button class="btn btn-primary" onclick="exportJSON()">📥 匯出 JSON</button>
+      <button class="btn btn-secondary" style="grid-column:1/-1;" onclick="copyLineText()">📋 複製 LINE 統計文字</button>
+    </div>
+    <div style="text-align:center;margin-top:12px;">
+      <button class="btn btn-outline btn-sm" onclick="refreshStats()">🔄 重新整理統計</button>
     </div>
   </div>
 
-  <div style="text-align:center;margin-top:16px;">
-    <button class="btn btn-outline btn-sm" onclick="refreshStats()">🔄 重新整理</button>
+  <!-- Lark Base 連結（低調） -->
+  <div style="text-align:center;margin-top:4px;">
+    <a href="https://psgi7t86exuf.sg.larksuite.com/base/LiRqbp72naWKRRsMNYTl5cjTgof" target="_blank"
+       style="font-size:0.85rem;color:var(--text-light);text-decoration:underline;padding:8px;">
+      📊 開啟 Lark Base 統計表（新分頁）
+    </a>
   </div>
+
 </div>
 
 <!-- ============================================
@@ -833,58 +1132,65 @@
 <div id="page-settings" class="page">
   <div id="settings-alert"></div>
 
-  <div class="notice-box" style="background:#fff3e0;border-color:#ffb74d;margin-bottom:16px;">
-    <h3 style="color:#e65100;">⚠️ 重要：請先填寫地點設定</h3>
-    <ul style="color:#5d4037;">
-      <li>「地點代碼」為固定代號（已預設，請勿修改）</li>
-      <li>「發放地點名稱」填寫實際發放位置（如：台北車站西門廣場）</li>
-      <li>「集合地點」填寫集合地點（如：西門捷運站1號出口）</li>
-      <li>總學員長（蔡耀文）需先到這個頁面填寫，各組學員長才能看到完整資訊</li>
-      <li>設定完成後按下「💾 儲存設定」即可</li>
-    </ul>
+  <div class="settings-warning">
+    <strong>⚠️ 請先由總學員長填寫地點資訊</strong><br>
+    <small>「集合地點」需由總學員長填寫，各組學員長才能看到完整資訊。</small>
   </div>
 
+  <!-- 6/3 地點設定 -->
   <div class="card">
-    <div class="card-title">📍 6/3（三）｜地點代碼：園1、賣2、聯1</div>
+    <div class="card-title">📍 6/3（三）地點設定</div>
     <div id="settings-63"></div>
   </div>
 
+  <!-- 6/10 地點設定 -->
   <div class="card">
-    <div class="card-title">📍 6/10（三）｜地點代碼：掃1、精2、園2</div>
+    <div class="card-title">📍 6/10（三）地點設定</div>
     <div id="settings-610"></div>
   </div>
 
-  <div class="card">
-    <div class="card-title">🔧 Lark API 設定</div>
-    <div class="form-group">
-      <label>Cloudflare Worker URL（用於同步到 Lark Base）</label>
-      <input type="text" id="cf-worker-url" placeholder="https://your-worker.workers.dev" onchange="saveSettings()">
-      <small style="color:var(--text-light);font-size:0.8rem;">留空則只使用本機 localStorage</small>
-    </div>
-    <div class="form-group">
-      <label>Lark App Token（Base ID）</label>
-      <input type="text" id="lark-app-token" placeholder="LiRqbp72naWKRRsMNYTl5cjTgof" value="LiRqbp72naWKRRsMNYTl5cjTgof" onchange="saveSettings()">
-    </div>
-    <div class="form-group">
-      <label>Lark Table ID</label>
-      <input type="text" id="lark-table-id" placeholder="tblsnPYcOvzeoHMW" value="tblsnPYcOvzeoHMW" onchange="saveSettings()">
+  <!-- 儲存按鈕 -->
+  <button class="btn btn-primary btn-block btn-lg" onclick="saveLocationSettings()">
+    💾 儲存地點設定
+  </button>
+  <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="resetToDefaults()">
+    🔄 恢復預設
+  </button>
+
+  <!-- 進階設定（收合） -->
+  <button class="advanced-toggle" onclick="toggleCollapse(this)" type="button" style="margin-top:16px;">
+    <span>🔧 進階設定（Lark API）</span>
+    <span class="arrow">▼</span>
+  </button>
+  <div class="advanced-content">
+    <div class="card" style="margin-top:8px;">
+      <div class="form-group">
+        <label>Cloudflare Worker URL</label>
+        <input type="text" id="cf-worker-url" placeholder="留空則只使用本機儲存" onchange="saveSettings()">
+        <small style="color:var(--text-light);font-size:0.8rem;">用於同步到 Lark Base</small>
+      </div>
+      <div class="form-group">
+        <label>Lark App Token（Base ID）</label>
+        <input type="text" id="lark-app-token" value="LiRqbp72naWKRRsMNYTl5cjTgof" onchange="saveSettings()">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Lark Table ID</label>
+        <input type="text" id="lark-table-id" value="tblsnPYcOvzeoHMW" onchange="saveSettings()">
+      </div>
     </div>
   </div>
-
-  <button class="btn btn-primary btn-block" onclick="saveLocationSettings()">💾 儲存設定</button>
-  <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="resetToDefaults()">🔄 恢復預設地點</button>
 </div>
 
 <!-- ============================================
-     Confirm Modal
+     Confirm Modal（底部彈出）
 ============================================ -->
-<div class="modal-overlay" id="confirm-modal">
+<div class="modal-overlay" id="confirm-modal" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h3>✅ 確認回報內容</h3>
     <div class="modal-content" id="confirm-content"></div>
     <div class="modal-actions">
-      <button class="btn btn-outline btn-sm" onclick="closeModal()">取消</button>
-      <button class="btn btn-primary btn-sm" onclick="confirmSubmit()">確認送出</button>
+      <button class="btn btn-outline" onclick="closeModal()">取消</button>
+      <button class="btn btn-success" onclick="confirmSubmit()">確認送出</button>
     </div>
   </div>
 </div>
@@ -901,25 +1207,27 @@ const SETTINGS_KEY = 'dm_report_settings';
 
 const DEFAULT_LOCATIONS = {
   '63': [
-    { code: '園1', name: '公園路一帶', meet: '請填寫集合地點', note: '' },
-    { code: '賣2', name: '賣場/市集', meet: '請填寫集合地點', note: '' },
-    { code: '聯1', name: '聯絡處/據點', meet: '請填寫集合地點', note: '' },
+    { code: '園1', name: '公園路一帶', meet: '', note: '' },
+    { code: '賣2', name: '賣場/市集', meet: '', note: '' },
+    { code: '聯1', name: '聯絡處/據點', meet: '', note: '' },
   ],
   '610': [
-    { code: '掃1', name: '掃街路線', meet: '請填寫集合地點', note: '' },
-    { code: '精2', name: '精舍/禪修中心', meet: '請填寫集合地點', note: '' },
-    { code: '園2', name: '公園路二帶', meet: '請填寫集合地點', note: '' },
+    { code: '掃1', name: '掃街路線', meet: '', note: '' },
+    { code: '精2', name: '精舍/禪修中心', meet: '', note: '' },
+    { code: '園2', name: '公園路二帶', meet: '', note: '' },
   ]
 };
 
 /* ============================================
    State
 ============================================ */
-let reportData = {};        // { groupId: { ... } }
+let reportData    = {};
 let locationSettings = {};
-let participants63 = [];
+let participants63  = [];
 let participants610 = [];
-let settings = {};
+let settings        = {};
+let selectedLoc63   = '';
+let selectedLoc610  = '';
 
 /* ============================================
    Init
@@ -947,14 +1255,10 @@ document.addEventListener('DOMContentLoaded', () => {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
 
-  // Init location selects
-  renderLocationSelects();
+  // Init location selects & settings
+  renderLocationGrids();
   renderLocationSettings();
   renderAnnounceLocations();
-
-  // Toggle visibility
-  toggle63();
-  toggle610();
 
   // Stats
   refreshStats();
@@ -968,137 +1272,161 @@ function switchTab(tabId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
   document.getElementById(`page-${tabId}`).classList.add('active');
-
   if (tabId === 'stats') refreshStats();
+  window.scrollTo(0, 0);
 }
 
 /* ============================================
-   Location helpers
+   Collapsible Sections
 ============================================ */
-function renderLocationSelects() {
+function toggleCollapse(btn) {
+  btn.classList.toggle('open');
+  const content = btn.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+/* ============================================
+   Location: Render big button grids in form
+============================================ */
+function renderLocationGrids() {
   ['63', '610'].forEach(key => {
-    const sel = document.getElementById(`loc${key}`);
-    sel.innerHTML = '<option value="">請選擇地點</option>';
+    const container = document.getElementById(`loc-grid-${key}`);
+    container.innerHTML = '';
     locationSettings[key].forEach(loc => {
-      // Show code + name in dropdown; highlight if meet point not filled in
-      const meetHint = loc.meet && loc.meet !== '請填寫集合地點' ? `集合：${loc.meet}` : '⚠️ 請至「⚙️ 地點設定」填寫集合地點';
-      const displayName = loc.name && loc.name !== '請填寫集合地點' ? loc.name : loc.code;
-      sel.innerHTML += `<option value="${loc.code}">${loc.code}｜${displayName}｜${meetHint}</option>`;
+      const meetHint = loc.meet ? loc.meet : '⚠️ 需設定集合地點';
+      const html = `
+        <button type="button" class="loc-btn" data-key="${key}" data-code="${loc.code}" onclick="selectLoc('${key}','${loc.code}',this)">
+          <span class="loc-code">${loc.code}</span>
+          <span class="loc-hint">${meetHint}</span>
+        </button>`;
+      container.insertAdjacentHTML('beforeend', html);
     });
   });
 }
 
-function renderAnnounceLocations() {
-  // Show code + name + meet for each location
-  function locLine(key) {
-    return locationSettings[key].map(l => {
-      const meet = l.meet && l.meet !== '請填寫集合地點' ? `集合：${l.meet}` : '⚠️ 需至「⚙️ 地點設定」填寫集合地點';
-      return `　　${l.code}｜${l.name}（${meet}）`;
-    }).join('\n');
-  }
-  const l63 = locLine('63');
-  const l610 = locLine('610');
-  document.getElementById('locations-63').innerHTML = `<pre style="margin:6px 0 0 0;font-size:0.85rem;white-space:pre-wrap;line-height:1.8;color:var(--text);">${l63}</pre>`;
-  document.getElementById('locations-610').innerHTML = `<pre style="margin:6px 0 0 0;font-size:0.85rem;white-space:pre-wrap;line-height:1.8;color:var(--text);">${l610}</pre>`;
+function selectLoc(key, code, btn) {
+  // Remove selected from siblings
+  const grid = document.getElementById(`loc-grid-${key}`);
+  grid.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (key === '63') selectedLoc63 = code;
+  else selectedLoc610 = code;
 }
 
+/* ============================================
+   Announcement page: date cards
+============================================ */
+function renderAnnounceLocations() {
+  function buildLocList(key) {
+    return locationSettings[key].map(l => {
+      const meet = l.meet ? `集合：${l.meet}` : '⚠️ 需至「地點設定」填寫集合地點';
+      return `　${l.code}｜${l.name}（${meet}）`;
+    }).join('\n');
+  }
+  const opts63  = { __html: buildLocList('63').replace(/\n/g, '<br>') };
+  const opts610 = { __html: buildLocList('610').replace(/\n/g, '<br>') };
+  document.getElementById('announce-locs-63').innerHTML = opts63.__html;
+  document.getElementById('announce-locs-610').innerHTML = opts610.__html;
+}
+
+/* ============================================
+   Toggle: 是/否 buttons
+============================================ */
+function setToggle(key, val, btn) {
+  // Set radio
+  document.getElementById(`j${key}-${val === '是' ? 'yes' : 'no'}`).checked = true;
+
+  // Style buttons
+  const group = document.getElementById(`toggle-${key}`);
+  group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  // Show/hide details
+  const details = document.getElementById(`details-${key}`);
+  if (val === '是') {
+    details.classList.remove('hidden');
+  } else {
+    details.classList.add('hidden');
+    // Clear location selection
+    if (key === '63') selectedLoc63 = '';
+    else selectedLoc610 = '';
+    const grid = document.getElementById(`loc-grid-${key}`);
+    grid.querySelectorAll('.loc-btn').forEach(b => b.classList.remove('selected'));
+  }
+}
+
+/* ============================================
+   Location Settings page
+============================================ */
 function renderLocationSettings() {
   ['63', '610'].forEach(key => {
     const container = document.getElementById(`settings-${key}`);
     container.innerHTML = '';
     locationSettings[key].forEach((loc, i) => {
-      const nameVal = (loc.name && loc.name !== '請填寫集合地點') ? loc.name : '';
-      const meetVal = (loc.meet && loc.meet !== '請填寫集合地點') ? loc.meet : '';
-      const namePh = loc.code === '園1' ? '例：台北車站西門廣場' :
-                     loc.code === '賣2' ? '例：家樂福台北店' :
-                     loc.code === '聯1' ? '例：里民中心' :
-                     loc.code === '掃1' ? '例：忠孝東路沿線' :
-                     loc.code === '精2' ? '例：內湖園區' : '例：公園路';
-      container.innerHTML += `
-        <div class="location-card">
-          <div class="location-card-header">📌 ${loc.code}</div>
-          <div class="form-group" style="margin-bottom:8px;">
+      const namePh = key === '63'
+        ? (loc.code === '園1' ? '例：台北車站西門廣場' : loc.code === '賣2' ? '例：家樂福' : '例：里民中心')
+        : (loc.code === '掃1' ? '例：忠孝東路沿線' : loc.code === '精2' ? '例：內湖精舍' : '例：公園路');
+      container.insertAdjacentHTML('beforeend', `
+        <div class="location-setting-card">
+          <div class="location-setting-header">📌 ${loc.code}｜${loc.name}</div>
+          <div class="form-group" style="margin-bottom:10px;">
             <label>發放地點名稱</label>
-            <input type="text" id="loc-${key}-${i}-name" value="${nameVal}" placeholder="${namePh}">
+            <input type="text" id="loc-${key}-${i}-name" value="${escHtml(loc.name)}" placeholder="${namePh}">
           </div>
-          <div class="form-group" style="margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:10px;">
             <label>集合地點（必填）</label>
-            <input type="text" id="loc-${key}-${i}-meet" value="${meetVal}" placeholder="例：西門捷運站1號出口">
+            <input type="text" id="loc-${key}-${i}-meet" value="${escHtml(loc.meet)}" placeholder="例：西門捷運站1號出口">
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label>備註</label>
-            <input type="text" id="loc-${key}-${i}-note" value="${loc.note || ''}" placeholder="其他補充">
+            <input type="text" id="loc-${key}-${i}-note" value="${escHtml(loc.note || '')}" placeholder="其他補充（非必填）">
           </div>
         </div>
-      `;
+      `);
     });
   });
 
-  // Fill API settings
-  document.getElementById('cf-worker-url').value = settings.cfWorkerUrl || '';
-  document.getElementById('lark-app-token').value = settings.larkAppToken || '';
-  document.getElementById('lark-table-id').value = settings.larkTableId || '';
+  document.getElementById('cf-worker-url').value    = settings.cfWorkerUrl || '';
+  document.getElementById('lark-app-token').value  = settings.larkAppToken || '';
+  document.getElementById('lark-table-id').value    = settings.larkTableId || '';
 }
 
 function saveLocationSettings() {
   ['63', '610'].forEach(key => {
     locationSettings[key].forEach((loc, i) => {
-      loc.name = document.getElementById(`loc-${key}-${i}-name`).value;
-      loc.meet = document.getElementById(`loc-${key}-${i}-meet`).value;
-      loc.note = document.getElementById(`loc-${key}-${i}-note`).value;
+      loc.name = document.getElementById(`loc-${key}-${i}-name`).value.trim();
+      loc.meet = document.getElementById(`loc-${key}-${i}-meet`).value.trim();
+      loc.note = document.getElementById(`loc-${key}-${i}-note`).value.trim();
     });
   });
 
-  settings.locations = locationSettings;
-  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value;
-  settings.larkAppToken = document.getElementById('lark-app-token').value;
-  settings.larkTableId = document.getElementById('lark-table-id').value;
+  settings.locations   = locationSettings;
+  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value.trim();
+  settings.larkAppToken = document.getElementById('lark-app-token').value.trim();
+  settings.larkTableId  = document.getElementById('lark-table-id').value.trim();
 
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  showToast('✅ 設定已儲存');
-  renderLocationSelects();
+  renderLocationGrids();
   renderAnnounceLocations();
+  showToast('✅ 設定已儲存');
 }
 
 function resetToDefaults() {
   if (!confirm('確定恢復預設地點？自訂的設定會被覆蓋。')) return;
   settings.locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
-  locationSettings = settings.locations;
+  locationSettings   = settings.locations;
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   renderLocationSettings();
-  renderLocationSelects();
+  renderLocationGrids();
   renderAnnounceLocations();
   showToast('✅ 已恢復預設');
 }
 
 function saveSettings() {
-  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value;
-  settings.larkAppToken = document.getElementById('lark-app-token').value;
-  settings.larkTableId = document.getElementById('lark-table-id').value;
+  settings.cfWorkerUrl = document.getElementById('cf-worker-url').value.trim();
+  settings.larkAppToken = document.getElementById('lark-app-token').value.trim();
+  settings.larkTableId  = document.getElementById('lark-table-id').value.trim();
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-}
-
-/* ============================================
-   Form: toggle sections
-============================================ */
-function toggle63() {
-  const val = document.querySelector('input[name="j63"]:checked')?.value;
-  document.getElementById('form-63-details').style.display = val === '是' ? 'block' : 'none';
-  if (val === '否') {
-    document.getElementById('loc63').removeAttribute('required');
-  } else {
-    document.getElementById('loc63').setAttribute('required', '');
-  }
-}
-
-function toggle610() {
-  const val = document.querySelector('input[name="j610"]:checked')?.value;
-  document.getElementById('form-610-details').style.display = val === '是' ? 'block' : 'none';
-  if (val === '否') {
-    document.getElementById('loc610').removeAttribute('required');
-  } else {
-    document.getElementById('loc610').setAttribute('required', '');
-  }
 }
 
 /* ============================================
@@ -1106,89 +1434,101 @@ function toggle610() {
 ============================================ */
 function addParticipant(key) {
   const input = document.getElementById(`input-${key}`);
-  const name = input.value.trim();
+  const name  = input.value.trim();
   if (!name) return;
 
-  if (key === '63') {
-    if (!participants63.includes(name)) participants63.push(name);
-    renderParticipants('63', participants63);
-    input.value = '';
-  } else {
-    if (!participants610.includes(name)) participants610.push(name);
-    renderParticipants('610', participants610);
-    input.value = '';
-  }
+  const list = key === '63' ? participants63 : participants610;
+  if (!list.includes(name)) list.push(name);
+
+  renderParticipants(key, list);
+  input.value = '';
+  input.focus();
 }
 
 function removeParticipant(key, name) {
-  if (key === '63') {
-    participants63 = participants63.filter(n => n !== name);
-    renderParticipants('63', participants63);
-  } else {
-    participants610 = participants610.filter(n => n !== name);
-    renderParticipants('610', participants610);
-  }
+  const list = key === '63' ? participants63 : participants610;
+  const idx  = list.indexOf(name);
+  if (idx > -1) list.splice(idx, 1);
+  renderParticipants(key, list);
 }
 
 function renderParticipants(key, list) {
   const container = document.getElementById(`participants-${key}`);
   if (list.length === 0) {
-    container.innerHTML = '<div style="color:var(--text-light);font-size:0.85rem;padding:4px 0;">尚無參與人員，請新增</div>';
+    container.innerHTML = '<div class="empty-participants">尚無參與人員，請新增</div>';
     return;
   }
   container.innerHTML = list.map(name => `
     <div class="participant-item">
-      <span>${name}</span>
-      <button type="button" onclick="removeParticipant('${key}','${name}')">×</button>
+      <span>${escHtml(name)}</span>
+      <button type="button" class="del-btn" onclick="removeParticipant('${key}','${escHtml(name)}')">×</button>
     </div>
   `).join('');
 }
 
 /* ============================================
-   Load existing group data
+   Load existing group data (for edit)
 ============================================ */
 function loadGroupData() {
   const group = document.getElementById('group').value;
   if (!group || !reportData[group]) {
-    // Reset form
     document.getElementById('leader-name').value = '';
-    document.getElementById('contact').value = '';
-    document.querySelector('input[name="j63"][value=""]').checked = true;
-    toggle63();
-    document.querySelector('input[name="j610"][value=""]').checked = true;
-    toggle610();
-    participants63 = [];
+    document.getElementById('contact').value     = '';
+    resetFormToggles('63');
+    resetFormToggles('610');
+    participants63  = [];
     participants610 = [];
-    renderParticipants('63', []);
+    selectedLoc63   = '';
+    selectedLoc610  = '';
+    renderParticipants('63',  []);
     renderParticipants('610', []);
+    document.getElementById('note-general').value = '';
     return;
   }
 
   const d = reportData[group];
   document.getElementById('leader-name').value = d.leaderName || '';
-  document.getElementById('contact').value = d.contact || '';
+  document.getElementById('contact').value     = d.contact     || '';
 
   // 6/3
-  const r63 = d.j63 || {};
-  document.querySelector(`input[name="j63"][value="${r63.participate || ''}"]`).checked = true;
-  toggle63();
-  document.getElementById('loc63').value = r63.location || '';
-  document.getElementById('meet63').value = r63.meetPoint || '';
-  participants63 = r63.participants || [];
-  renderParticipants('63', participants63);
-  document.getElementById('note63').value = r63.note || '';
-
+  loadRound('63', d.j63);
   // 6/10
-  const r610 = d.j610 || {};
-  document.querySelector(`input[name="j610"][value="${r610.participate || ''}"]`).checked = true;
-  toggle610();
-  document.getElementById('loc610').value = r610.location || '';
-  document.getElementById('meet610').value = r610.meetPoint || '';
-  participants610 = r610.participants || [];
-  renderParticipants('610', participants610);
-  document.getElementById('note610').value = r610.note || '';
+  loadRound('610', d.j610);
 
   document.getElementById('note-general').value = d.noteGeneral || '';
+}
+
+function loadRound(key, data) {
+  const val = data.participate || '';
+  resetFormToggles(key);
+  if (val) {
+    const btn = document.querySelector(`#toggle-${key} .toggle-btn${val === '是' ? '' : '.no'}`);
+    if (btn) setToggle(key, val, btn);
+  }
+  if (val === '是') {
+    // Select location button
+    selectedLoc63 = key === '63' ? data.location : selectedLoc63;
+    selectedLoc610 = key === '610' ? data.location : selectedLoc610;
+    const locCode = data.location;
+    const grid = document.getElementById(`loc-grid-${key}`);
+    grid.querySelectorAll('.loc-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.code === locCode);
+    });
+    document.getElementById(`meet${key}`).value = data.meetPoint || '';
+    const list = key === '63' ? participants63 : participants610;
+    list.length = 0;
+    list.push(...(data.participants || []));
+    renderParticipants(key, list);
+    document.getElementById(`note${key}`).value = data.note || '';
+  }
+}
+
+function resetFormToggles(key) {
+  const group = document.getElementById(`toggle-${key}`);
+  if (group) group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById(`j${key}-yes`).checked = false;
+  document.getElementById(`j${key}-no`).checked  = false;
+  document.getElementById(`details-${key}`).classList.add('hidden');
 }
 
 /* ============================================
@@ -1197,46 +1537,36 @@ function loadGroupData() {
 function handleSubmit(e) {
   e.preventDefault();
 
-  const group = document.getElementById('group').value;
+  const group      = document.getElementById('group').value;
   const leaderName = document.getElementById('leader-name').value.trim();
+  const contact    = document.getElementById('contact').value.trim();
 
-  if (!group) { showAlert('form-alert', '❌ 請選擇組別', 'error'); return false; }
+  if (!group)      { showAlert('form-alert', '❌ 請選擇組別', 'error'); return false; }
   if (!leaderName) { showAlert('form-alert', '❌ 請填寫組學員長姓名', 'error'); return false; }
 
-  const j63Val = document.querySelector('input[name="j63"]:checked')?.value;
+  const j63Val  = document.querySelector('input[name="j63"]:checked')?.value;
   const j610Val = document.querySelector('input[name="j610"]:checked')?.value;
 
-  if (!j63Val) { showAlert('form-alert', '❌ 請選擇 6/3 是否參與', 'error'); return false; }
+  if (!j63Val)  { showAlert('form-alert', '❌ 請選擇 6/3 是否參與', 'error'); return false; }
   if (!j610Val) { showAlert('form-alert', '❌ 請選擇 6/10 是否參與', 'error'); return false; }
 
   if (j63Val === '是') {
-    const loc63 = document.getElementById('loc63').value;
-    if (!loc63) { showAlert('form-alert', '❌ 6/3 請選擇地點', 'error'); return false; }
+    if (!selectedLoc63)     { showAlert('form-alert', '❌ 6/3 請選擇地點', 'error'); return false; }
     if (participants63.length === 0) { showAlert('form-alert', '❌ 6/3 請至少新增一位參與人員', 'error'); return false; }
   }
   if (j610Val === '是') {
-    const loc610 = document.getElementById('loc610').value;
-    if (!loc610) { showAlert('form-alert', '❌ 6/10 請選擇地點', 'error'); return false; }
+    if (!selectedLoc610)     { showAlert('form-alert', '❌ 6/10 請選擇地點', 'error'); return false; }
     if (participants610.length === 0) { showAlert('form-alert', '❌ 6/10 請至少新增一位參與人員', 'error'); return false; }
   }
 
   // Build confirm content
-  const locName63 = locationSettings['63'].find(l => l.code === document.getElementById('loc63').value);
-  const locName610 = locationSettings['610'].find(l => l.code === document.getElementById('loc610').value);
-
-  let html = `<strong>第${group}組｜${leaderName}</strong><br><br>`;
-  html += `<strong>6/3（${j63Val}）</strong><br>`;
-  if (j63Val === '是') {
-    html += `地點：${locName63 ? locName63.code + '｜' + locName63.name : document.getElementById('loc63').value}<br>`;
-    html += `集合：${document.getElementById('meet63').value || '（未填）'}<br>`;
-    html += `人員：${participants63.join('、')}<br>`;
-  }
-  html += `<br><strong>6/10（${j610Val}）</strong><br>`;
-  if (j610Val === '是') {
-    html += `地點：${locName610 ? locName610.code + '｜' + locName610.name : document.getElementById('loc610').value}<br>`;
-    html += `集合：${document.getElementById('meet610').value || '（未填）'}<br>`;
-    html += `人員：${participants610.join('、')}<br>`;
-  }
+  let html = `<strong style="font-size:1.1rem;">第${group}組｜${escHtml(leaderName)}</strong><br><br>`;
+  html += `<strong>6/3</strong>：${j63Val === '是'
+    ? `✅ 參與｜${selectedLoc63}｜${participants63.length}人<br>　${participants63.join('、')}`
+    : '❌ 不參與'}`;
+  html += `<br><br><strong>6/10</strong>：${j610Val === '是'
+    ? `✅ 參與｜${selectedLoc610}｜${participants610.length}人<br>　${participants610.join('、')}`
+    : '❌ 不參與'}`;
 
   document.getElementById('confirm-content').innerHTML = html;
   document.getElementById('confirm-modal').classList.add('show');
@@ -1246,32 +1576,31 @@ function handleSubmit(e) {
 async function confirmSubmit() {
   closeModal();
 
-  const group = document.getElementById('group').value;
+  const group      = document.getElementById('group').value;
   const leaderName = document.getElementById('leader-name').value.trim();
-  const contact = document.getElementById('contact').value.trim();
-
-  const j63Val = document.querySelector('input[name="j63"]:checked')?.value;
-  const j610Val = document.querySelector('input[name="j610"]:checked')?.value;
+  const contact    = document.getElementById('contact').value.trim();
+  const j63Val     = document.querySelector('input[name="j63"]:checked')?.value;
+  const j610Val    = document.querySelector('input[name="j610"]:checked')?.value;
 
   const record = {
     group,
     leaderName,
     contact,
     j63: {
-      participate: j63Val,
-      location: j63Val === '是' ? document.getElementById('loc63').value : '',
-      meetPoint: j63Val === '是' ? document.getElementById('meet63').value : '',
-      participants: j63Val === '是' ? [...participants63] : [],
-      note: j63Val === '是' ? document.getElementById('note63').value : '',
+      participate:   j63Val,
+      location:      j63Val === '是' ? selectedLoc63 : '',
+      meetPoint:     j63Val === '是' ? document.getElementById('meet63').value.trim() : '',
+      participants:  j63Val === '是' ? [...participants63] : [],
+      note:          j63Val === '是' ? document.getElementById('note63').value.trim() : '',
     },
     j610: {
-      participate: j610Val,
-      location: j610Val === '是' ? document.getElementById('loc610').value : '',
-      meetPoint: j610Val === '是' ? document.getElementById('meet610').value : '',
-      participants: j610Val === '是' ? [...participants610] : [],
-      note: j610Val === '是' ? document.getElementById('note610').value : '',
+      participate:   j610Val,
+      location:      j610Val === '是' ? selectedLoc610 : '',
+      meetPoint:     j610Val === '是' ? document.getElementById('meet610').value.trim() : '',
+      participants:  j610Val === '是' ? [...participants610] : [],
+      note:          j610Val === '是' ? document.getElementById('note610').value.trim() : '',
     },
-    noteGeneral: document.getElementById('note-general').value,
+    noteGeneral: document.getElementById('note-general').value.trim(),
     updatedAt: new Date().toISOString(),
   };
 
@@ -1286,48 +1615,50 @@ async function confirmSubmit() {
   }
 
   showAlert('form-alert',
-    larkOk ? '✅ 已回報，資料同步到 Lark Base' : '✅ 已回報（已存本機，Lark 同步可稍後設定）',
+    larkOk ? '✅ 已回報，資料同步到 Lark Base' : '✅ 已回報（已存本機）',
     'success');
 
-  // Reset
+  // Reset form
   document.getElementById('report-form').reset();
-  participants63 = [];
+  participants63  = [];
   participants610 = [];
-  renderParticipants('63', []);
+  selectedLoc63   = '';
+  selectedLoc610  = '';
+  renderParticipants('63',  []);
   renderParticipants('610', []);
-  toggle63();
-  toggle610();
+  resetFormToggles('63');
+  resetFormToggles('610');
 }
 
 /* ============================================
-   Lark Sync via Cloudflare Worker
+   Lark Sync
 ============================================ */
 async function syncToLark(record) {
   try {
-    const response = await fetch(settings.cfWorkerUrl, {
+    const resp = await fetch(settings.cfWorkerUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         appToken: settings.larkAppToken,
-        tableId: settings.larkTableId,
+        tableId:  settings.larkTableId,
         record: {
-          '組別': record.group,
-          '組學員長': record.leaderName,
-          '聯絡方式': record.contact,
-          '6/3參與': record.j63.participate,
-          '6/3地點': record.j63.location,
-          '6/3集合地點': record.j63.meetPoint,
-          '6/3參與人員': record.j63.participants.join('\n'),
-          '6/10參與': record.j610.participate,
-          '6/10地點': record.j610.location,
+          '組別':         record.group,
+          '組學員長':     record.leaderName,
+          '聯絡方式':     record.contact,
+          '6/3參與':      record.j63.participate,
+          '6/3地點':      record.j63.location,
+          '6/3集合地點':  record.j63.meetPoint,
+          '6/3參與人員':  record.j63.participants.join('\n'),
+          '6/10參與':     record.j610.participate,
+          '6/10地點':     record.j610.location,
           '6/10集合地點': record.j610.meetPoint,
           '6/10參與人員': record.j610.participants.join('\n'),
-          '備註': record.noteGeneral,
-          '回報時間': new Date().toLocaleString('zh-TW'),
+          '備註':         record.noteGeneral,
+          '回報時間':     new Date().toLocaleString('zh-TW'),
         }
       })
     });
-    return response.ok;
+    return resp.ok;
   } catch (e) {
     console.error('Lark sync error:', e);
     return false;
@@ -1339,97 +1670,111 @@ async function syncToLark(record) {
 ============================================ */
 function refreshStats() {
   const groups = Object.keys(reportData);
-
-  // Count reported
   document.getElementById('stat-reported').textContent = groups.length;
 
-  // Pending groups
   const reported = new Set(groups);
   const allGroups = ['1','2','3','4','5','6','7','8','9'];
-  const pending = allGroups.filter(g => !reported.has(g));
+  const pending   = allGroups.filter(g => !reported.has(g));
+
   document.getElementById('pending-groups').innerHTML = pending.length > 0
     ? pending.map(g => `<span class="pending-tag">第${g}組</span>`).join('')
-    : '<span class="all-done">✨ 所有組別都已回報！</span>';
+    : '<span class="all-done-tag">✨ 所有組別都已回報！</span>';
 
-  // 6/3 and 6/10 totals
   let total63 = 0, total610 = 0;
-  const locStats63 = {};
+  const locStats63  = {};
   const locStats610 = {};
 
   allGroups.forEach(g => {
-    if (!reportData[g]) return;
     const d = reportData[g];
+    if (!d) return;
     if (d.j63.participate === '是') {
       total63 += d.j63.participants.length;
       const loc = d.j63.location;
-      if (!locStats63[loc]) locStats63[loc] = { groups: [], count: 0 };
+      if (!locStats63[loc]) locStats63[loc] = { groups: [], count: 0, meet: '' };
       locStats63[loc].groups.push(g);
       locStats63[loc].count += d.j63.participants.length;
+      if (d.j63.meetPoint) locStats63[loc].meet = d.j63.meetPoint;
     }
     if (d.j610.participate === '是') {
       total610 += d.j610.participants.length;
       const loc = d.j610.location;
-      if (!locStats610[loc]) locStats610[loc] = { groups: [], count: 0 };
+      if (!locStats610[loc]) locStats610[loc] = { groups: [], count: 0, meet: '' };
       locStats610[loc].groups.push(g);
       locStats610[loc].count += d.j610.participants.length;
+      if (d.j610.meetPoint) locStats610[loc].meet = d.j610.meetPoint;
     }
   });
 
-  document.getElementById('stat-63').textContent = total63;
+  document.getElementById('stat-63').textContent  = total63;
   document.getElementById('stat-610').textContent = total610;
 
-  // Location stats
-  renderLocationStats('63', locStats63);
+  renderLocationStats('63',  locStats63);
   renderLocationStats('610', locStats610);
-
-  // Group table
-  renderGroupTable();
+  renderGroupCards();
 }
 
 function renderLocationStats(key, stats) {
   const container = document.getElementById(`stats-${key}-locations`);
   const locs = locationSettings[key];
 
-  let html = '';
-  locs.forEach(loc => {
-    const s = stats[loc.code] || { groups: [], count: 0 };
-    const groupList = s.groups.length > 0
-      ? s.groups.map(g => `第${g}組`).join('、')
-      : '（無）';
-    html += `
-      <div class="location-group">
-        <h4>${loc.code}｜${loc.name || '（待設定）'}</h4>
-        <div class="location-row">
-          <span class="location-name">${s.count}人</span>
-          <span class="location-info">${groupList}</span>
+  if (!locs || locs.length === 0) {
+    container.innerHTML = '<div style="font-size:0.95rem;color:var(--text-light);">尚無地點資料</div>';
+    return;
+  }
+
+  container.innerHTML = locs.map(loc => {
+    const s      = stats[loc.code] || { groups: [], count: 0 };
+    const groups = s.groups.length > 0
+      ? s.groups.map(g => {
+          const d = reportData[g];
+          const names = d && d[`j${key}`].participants.join('、');
+          return `<div class="loc-stat-row"><span class="grp">第${g}組</span><span class="names">${names}</span></div>`;
+        }).join('')
+      : '<div class="loc-stat-row"><span class="names" style="color:var(--text-light);">尚無參與</span></div>';
+    const meet = loc.meet ? `<div class="loc-stat-meet">📍 集合：${loc.meet}</div>` : '';
+    return `
+      <div class="loc-stat-card">
+        <div class="loc-stat-header">
+          ${loc.code}｜${loc.name}
+          <span class="count-badge">${s.count}人</span>
         </div>
-        ${loc.meet && loc.meet !== '（待設定）' ? `<div class="location-row"><span class="location-name">集合</span><span class="location-info">${loc.meet}</span></div>` : ''}
+        ${groups}
+        ${meet}
       </div>
     `;
-  });
-  container.innerHTML = html;
+  }).join('');
 }
 
-function renderGroupTable() {
-  const tbody = document.getElementById('group-table-body');
+function renderGroupCards() {
+  const container = document.getElementById('group-cards');
   const allGroups = ['1','2','3','4','5','6','7','8','9'];
 
-  tbody.innerHTML = allGroups.map(g => {
+  container.innerHTML = allGroups.map(g => {
     const d = reportData[g];
     if (!d) {
-      return `<tr><td>${g}</td><td colspan="8" style="color:var(--text-light)">（未回報）</td></tr>`;
+      return `
+        <div class="group-card no-report">
+          <div class="group-card-header">第${g}組</div>
+          <div style="font-size:0.95rem;color:var(--text-light);">（尚未回報）</div>
+        </div>`;
     }
-    return `<tr>
-      <td>${g}</td>
-      <td>${d.leaderName}</td>
-      <td>${d.j63.participate === '是' ? d.j63.location : '—'}</td>
-      <td>${d.j63.meetPoint || '—'}</td>
-      <td>${d.j63.participate === '是' ? d.j63.participants.length : '—'}</td>
-      <td>${d.j610.participate === '是' ? d.j610.location : '—'}</td>
-      <td>${d.j610.meetPoint || '—'}</td>
-      <td>${d.j610.participate === '是' ? d.j610.participants.length : '—'}</td>
-      <td>${d.noteGeneral || ''}</td>
-    </tr>`;
+    const day63  = d.j63.participate === '是'
+      ? `<div class="group-card-row"><span class="label">6/3</span><span class="val active">${d.j63.location}｜${d.j63.participants.length}人</span></div>
+         <div class="group-card-row"><span class="label">人員</span><span class="val">${d.j63.participants.join('、')}</span></div>`
+      : `<div class="group-card-row"><span class="label">6/3</span><span class="val">❌ 不參與</span></div>`;
+    const day610 = d.j610.participate === '是'
+      ? `<div class="group-card-row"><span class="label">6/10</span><span class="val active">${d.j610.location}｜${d.j610.participants.length}人</span></div>
+         <div class="group-card-row"><span class="label">人員</span><span class="val">${d.j610.participants.join('、')}</span></div>`
+      : `<div class="group-card-row"><span class="label">6/10</span><span class="val">❌ 不參與</span></div>`;
+    const note   = d.noteGeneral ? `<div class="group-card-row"><span class="label">備註</span><span class="val">${escHtml(d.noteGeneral)}</span></div>` : '';
+    return `
+      <div class="group-card">
+        <div class="group-card-header">第${g}組｜${escHtml(d.leaderName)}</div>
+        ${day63}
+        ${day610}
+        ${note}
+      </div>
+    `;
   }).join('');
 }
 
@@ -1447,17 +1792,11 @@ function exportCSV() {
       rows.push([g,'','','','','','','','','','','','','']);
     } else {
       rows.push([
-        g,
-        d.leaderName,
-        d.contact,
-        d.j63.participate,
-        d.j63.location,
-        d.j63.meetPoint,
+        g, d.leaderName, d.contact,
+        d.j63.participate, d.j63.location, d.j63.meetPoint,
         d.j63.participate === '是' ? d.j63.participants.length : 0,
         d.j63.participate === '是' ? d.j63.participants.join('、') : '',
-        d.j610.participate,
-        d.j610.location,
-        d.j610.meetPoint,
+        d.j610.participate, d.j610.location, d.j610.meetPoint,
         d.j610.participate === '是' ? d.j610.participants.length : 0,
         d.j610.participate === '是' ? d.j610.participants.join('、') : '',
         d.noteGeneral,
@@ -1471,18 +1810,18 @@ function exportCSV() {
 }
 
 function exportJSON() {
-  const json = JSON.stringify(reportData, null, 2);
-  downloadFile(json, 'dm-report.json', 'application/json');
+  downloadFile(JSON.stringify(reportData, null, 2), 'dm-report.json', 'application/json');
   showToast('✅ JSON 已下載');
 }
 
 function copyLineText() {
   const allGroups = ['1','2','3','4','5','6','7','8','9'];
-  const reported = new Set(Object.keys(reportData));
-  const pending = allGroups.filter(g => !reported.has(g));
+  const reported  = new Set(Object.keys(reportData));
+  const pending   = allGroups.filter(g => !reported.has(g));
 
   let total63 = 0, total610 = 0;
-  const locStats63 = {}, locStats610 = {};
+  const locStats63  = {};
+  const locStats610 = {};
 
   allGroups.forEach(g => {
     const d = reportData[g];
@@ -1504,7 +1843,7 @@ function copyLineText() {
   function formatLoc(stats, locs) {
     return locs.map(loc => {
       const entries = stats[loc.code] || [];
-      if (entries.length === 0) return `${loc.code}：\n（無）`;
+      if (entries.length === 0) return `${loc.code}：（無）`;
       return `${loc.code}：\n` + entries.map(e => `第${e.group}組：${e.names.join('、')}，共${e.names.length}人`).join('\n');
     }).join('\n\n');
   }
@@ -1532,9 +1871,9 @@ ${pendingStr}
 
 function downloadFile(content, filename, type) {
   const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
@@ -1566,6 +1905,15 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 </script>
 </body>
