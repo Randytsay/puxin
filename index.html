@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>第61期初級禪修班｜三晚初發DM回報系統</title>
+<title>法緣廣傳・招生護持回報系統</title>
 <style>
 /* ============================================================
    RESET & BASE
@@ -571,6 +571,9 @@ textarea { resize: vertical; min-height: 80px; }
 
 .bottom-hint { text-align: center; padding: 10px; font-size: 0.82rem; color: var(--text-light); margin-top: 8px; }
 
+/* CTA button */
+.cta-btn { font-size: 1.15rem; height: 60px; margin-bottom: 4px; letter-spacing: 1px; }
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
@@ -587,8 +590,7 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- HEADER -->
 <header class="header">
   <h1>第61期初級禪修班｜三晚初</h1>
-  <div class="subtitle">發放 DM 與面紙包回報系統</div>
-  <div class="leader-badge">👑 總學員長：蔡耀文</div>
+  <div class="subtitle">法緣廣傳・招生護持回報系統</div>
 </header>
 
 <!-- TABS -->
@@ -604,12 +606,16 @@ textarea { resize: vertical; min-height: 80px; }
 <div class="panel active" id="panel0">
 
   <div class="notice-box">
-    <div class="notice-title">活動宗旨</div>
-    為協助 <strong>第61期初級禪修班</strong> 招生，三晚初班在 <strong>6/3（三）</strong> 及 <strong>6/10（三）</strong> 晚上原上課時間，進行兩次發心，發放 DM 與面紙包，將禪修班資訊分享給更多有緣人。<br><br>
+    <div class="notice-title">護持招生・廣結善緣</div>
+    為護持 <strong>第61期初級禪修班</strong> 招生，三晚初班將於 <strong>6/3（三）</strong> 與 <strong>6/10（三）</strong> 晚上，安排兩次招生護持發心，將禪修班招生資訊分享給更多有緣人，廣結善緣、護持法緣流布。<br><br>
     <strong>請各組學員長協助統計自己組內師兄，再統一送出回報。</strong>
   </div>
 
-  <div class="info-grid">
+  <!-- CTA -->
+  <button class="btn btn-gold cta-btn" id="ctaBtn">🙏 我要回報本組發心名單</button>
+  <div class="bottom-hint" style="margin-top:6px;">填完後可隨時回來修改，系統會自動覆蓋</div>
+
+  <div class="info-grid" style="margin-top:16px;">
     <div class="info-card">
       <div class="info-date">6/3（三）</div>
       <div class="info-time">晚上 8:00～9:00</div>
@@ -640,17 +646,14 @@ textarea { resize: vertical; min-height: 80px; }
     <div class="card-title"><span class="icon">📢</span> LINE 群組公告文字</div>
     <div class="announcement-area" id="announcementText">各位初級班師兄大家好，阿彌陀佛。
 
-我是初級班總學員長蔡耀文。
+為護持第61期初級禪修班招生，三晚初班將於 6/3（三）與 6/10（三）晚上 8:00～9:00，安排兩次招生護持發心，將禪修班招生資訊分享給更多有緣人。
 
-為了協助第61期初級禪修班招生，我們三晚初班在6/3（三）及6/10（三）晚上原上課時間，有兩次發心機會，一起發放DM與面紙包，將禪修班資訊分享給更多有緣人。
-
-請各組學員長協助統計自己組內師兄的發心意願，並透過本回報系統填寫：
-1. 6/3（三）是否可發心、選擇哪一個地點
-2. 6/10（三）是否可發心、選擇哪一個地點
+請各組學員長協助統計自己組內師兄的發心意願，並透過本系統完成回報：
+1. 6/3（三）是否可發心、選擇地點
+2. 6/10（三）是否可發心、選擇地點
 3. 各週參與人員名單
-4. 集合地點與備註
 
-每週有三個建議地點可選，鼓勵同一組師兄盡量選擇同一地點，方便集合、帶隊、領物資與彼此照應。
+每週有三個地點可選，鼓勵同一組師兄盡量選擇同一地點，方便集合、帶隊、領物資與彼此照應。
 
 感恩各位師兄一起發心，讓更多有緣人有機會接觸禪修、認識佛法，也成就我們自己一份護持招生的功德。
 
@@ -667,8 +670,8 @@ textarea { resize: vertical; min-height: 80px; }
     <div class="step-title">請依序完成：</div>
     <ol>
       <li>① 選擇組別</li>
-      <li>② 選擇每週發放地點</li>
-      <li>③ 勾選可參與的師兄</li>
+      <li>② 選擇發心地點</li>
+      <li>③ 勾選參與師兄</li>
       <li>④ 送出回報</li>
     </ol>
   </div>
@@ -837,9 +840,9 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- PANEL 3: LOCATION SETTINGS -->
 <div class="panel" id="panel3">
   <div class="card">
-    <div class="card-title"><span class="icon">📍</span> 地點代碼設定</div>
+    <div class="card-title"><span class="icon">📍</span> 地點設定</div>
     <p style="font-size:0.88rem; color:var(--text-light); margin-bottom:12px;">
-      設定各地點的完整資訊。代碼用於表單顯示，系統會呈現完整資訊。
+      設定各地點的完整資訊。學員長回報與統計總表將呈現此地點代碼對應的完整資訊。
     </p>
     <div id="locationSettings"></div>
     <button class="btn btn-primary" style="margin-top:14px;" onclick="saveLocations()">💾 儲存地點設定</button>
@@ -1565,7 +1568,7 @@ function getLineText() {
     if (!all[g] || (!all[g].d1?.active && !all[g].d2?.active)) notReported.push('第'+g+'組');
   }
 
-  let txt = '【第61期初級禪修班招生｜三晚初發DM回報統計】\n\n';
+  let txt = '【第61期初級禪修班招生｜三晚初護持發心回報統計】\n\n';
   txt += '一、6/3（三）晚上8:00～9:00\n';
   txt += `總人數：${d1Total}人\n\n`;
   places1.forEach(p => {
@@ -1669,6 +1672,15 @@ document.getElementById('tabNav').addEventListener('click', e => {
   if (btn.dataset.tab === '2') renderStats();
   if (btn.dataset.tab === '3') renderLocationSettings();
   if (btn.dataset.tab === '4') renderRosterPanel();
+});
+
+/* CTA button — jump to form */
+document.getElementById('ctaBtn').addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="1"]').classList.add('active');
+  document.getElementById('panel1').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /* ============================================================
